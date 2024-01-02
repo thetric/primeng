@@ -8,7 +8,7 @@ import { Code } from '../../domain/code';
             <p>Sidebar is used as a container and visibility is controlled with a binding to <i>visible</i>.</p>
         </app-docsectiontext>
         <div class="card flex justify-content-center">
-            <p-sidebar [(visible)]="sidebarVisible">
+            <p-sidebar [modal]="true" [(visible)]="sidebarVisible">
                 <h3>Sidebar</h3>
                 <p>
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo

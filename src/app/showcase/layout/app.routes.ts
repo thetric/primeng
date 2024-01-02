@@ -10,6 +10,7 @@ export const routes: Routes = [
         children: [
             { path: '', redirectTo: 'installation', pathMatch: 'full' },
             { path: 'accessibility', redirectTo: 'guides/accessibility', pathMatch: 'full' },
+            { path: 'passthrough', loadComponent: () => import('../pages/passthrough/passthrough').then((c) => c.Passthrough) },
             { path: 'installation', loadChildren: () => import('../pages/installation/installation.module').then((m) => m.InstallationModule) },
             { path: 'configuration', loadChildren: () => import('../pages/configuration/configurationdemo.module').then((m) => m.ConfigurationDemoModule) },
             { path: 'playground', loadChildren: () => import('../pages/playground/playground.module').then((m) => m.PlaygroundModule) },
