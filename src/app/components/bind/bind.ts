@@ -7,7 +7,7 @@ import { DomHandler } from 'primeng/dom';
     selector: '[pBind]'
 })
 export class Bind {
-    @Input('pBind') attrs: { [key: string]: string };
+    @Input('pBind') attrs: { [key: string]: any };
 
     host: HTMLElement;
 
@@ -21,37 +21,39 @@ export class Bind {
 
     bind() {
         if (ObjectUtils.isNotEmpty(this.attrs)) {
-            DomHandler.setAttributes(this.host, this.attrs);
-            const classes = this.classes();
-            const styles = this.styles();
-            const attributes = this.attributes();
-            const listeners = this.listeners();
-
-            console.log('classes', classes);
-            console.log('styles', styles);
-            console.log('attributes', attributes);
-            console.log('listeners', listeners);
+            DomHandler.setAttributes(this.host, this.all());
         }
     }
 
     classes() {
-        const classes: string[] = [];
-
+        const classes = this.attrs.class ? this.attrs.class.split(' ') : [];
+        const existingClasses: string[] = [];
         Array.from(this.host.classList).forEach((className: string) => {
-            classes.push(className);
+            existingClasses.push(className);
         });
-        return classes;
+
+        return this.attrs.class ? [...existingClasses, ...classes] : [...existingClasses];
     }
 
     attributes() {
         const attrs: { [key: string]: string } = {};
+        const existingAttrs: { [key: string]: string } = {};
+
+        if (this.attrs) {
+            Object.keys(this.attrs).forEach((key) => {
+                if (key !== 'class' && key !== 'style' && !key.startsWith('on')) {
+                    existingAttrs[key] = this.attrs[key];
+                }
+            });
+        }
+
         Array.from(this.host.attributes).forEach((attr: Attr) => {
             if (attr.name !== 'class' && attr.name !== 'style' && !attr.name.includes('ng-reflect')) {
                 attrs[attr.name] = attr.value;
             }
         });
 
-        return attrs;
+        return { ...attrs, ...existingAttrs };
     }
 
     styles() {
@@ -64,12 +66,21 @@ export class Bind {
             }
         }
 
-        return styles;
+        return { ...styles, ...this.attrs.style };
     }
 
     listeners() {
         const listeners: { [key: string]: Function } = {};
+        const existingListeners: { [key: string]: Function } = {};
         const element = this.host;
+
+        if (this.attrs) {
+            Object.keys(this.attrs).forEach((key) => {
+                if (key.startsWith('on')) {
+                    existingListeners[key] = this.attrs[key];
+                }
+            });
+        }
 
         for (const prop in element) {
             if (prop.startsWith('on')) {
@@ -78,7 +89,16 @@ export class Bind {
             }
         }
 
-        return listeners;
+        return { ...listeners, ...existingListeners };
+    }
+
+    all() {
+        return {
+            class: this.classes(),
+            style: this.styles(),
+            ...this.attributes(),
+            ...this.listeners()
+        };
     }
 }
 
