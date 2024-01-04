@@ -1,6 +1,6 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { CommonModule } from '@angular/common';
-import { AfterContentInit, ChangeDetectionStrategy, Component, ContentChild, ContentChildren, ElementRef, EventEmitter, Input, NgModule, Output, QueryList, TemplateRef, ViewEncapsulation } from '@angular/core';
+import { AfterContentInit, ChangeDetectionStrategy, Component, ContentChild, ContentChildren, ElementRef, EventEmitter, Input, NgModule, Output, QueryList, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { BlockableUI, Footer, PrimeTemplate, SharedModule } from 'primeng/api';
 import { MinusIcon } from 'primeng/icons/minus';
 import { PlusIcon } from 'primeng/icons/plus';
@@ -8,6 +8,7 @@ import { RippleModule } from 'primeng/ripple';
 import { Nullable } from 'primeng/ts-helpers';
 import { UniqueComponentId } from 'primeng/utils';
 import { PanelAfterToggleEvent, PanelBeforeToggleEvent } from './panel.interface';
+import { BasePanel } from './basepanel';
 
 /**
  * Panel is a container with the optional content toggle feature.
@@ -109,24 +110,10 @@ import { PanelAfterToggleEvent, PanelBeforeToggleEvent } from './panel.interface
     styleUrls: ['./panel.css'],
     host: {
         class: 'p-element'
-    }
+    },
+    inputs: ['toggleable', 'header', 'collapsed']
 })
-export class Panel implements AfterContentInit, BlockableUI {
-    /**
-     * Defines if content of panel can be expanded and collapsed.
-     * @group Props
-     */
-    @Input() toggleable: boolean | undefined;
-    /**
-     * Header text of the panel.
-     * @group Props
-     */
-    @Input() header: string | undefined;
-    /**
-     * Defines the initial state of panel content, supports one or two-way binding as well.
-     * @group Props
-     */
-    @Input() collapsed: boolean | undefined;
+export class Panel extends BasePanel implements AfterContentInit, BlockableUI {
     /**
      * Inline style of the component.
      * @group Props
@@ -213,7 +200,7 @@ export class Panel implements AfterContentInit, BlockableUI {
         return this.header;
     }
 
-    constructor(private el: ElementRef) {}
+    @ViewChild('component') componentViewChild: any;
 
     ngAfterContentInit() {
         (this.templates as QueryList<PrimeTemplate>).forEach((item) => {
@@ -301,7 +288,7 @@ export class Panel implements AfterContentInit, BlockableUI {
 }
 
 @NgModule({
-    imports: [CommonModule, SharedModule, RippleModule, PlusIcon, MinusIcon],
+    imports: [BasePanel, CommonModule, SharedModule, RippleModule, PlusIcon, MinusIcon],
     exports: [Panel, SharedModule],
     declarations: [Panel]
 })

@@ -226,4 +226,13 @@ export class ObjectUtils {
 
         return item;
     }
+
+    public static isString(value, empty = true) {
+        return typeof value === 'string' && (empty || value !== '');
+    }
+
+    public static toFlatCase(str: string): string {
+        // convert snake, kebab, camel and pascal cases to flat case
+        return this.isString(str) ? str.replace(/(-|_)/g, '').toLowerCase() : str;
+    }
 }

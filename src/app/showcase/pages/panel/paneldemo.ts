@@ -11,35 +11,35 @@ import { AccessibilityDoc } from '../../doc/panel/accessibilitydoc';
 })
 export class PanelDemo {
     docs = [
-        {
-            id: 'import',
-            label: 'Import',
-            component: ImportDoc
-        },
+        // {
+        //     id: 'import',
+        //     label: 'Import',
+        //     component: ImportDoc
+        // },
         {
             id: 'basic',
             label: 'Basic',
             component: BasicDoc
-        },
-        {
-            id: 'toggleable',
-            label: 'Toggleable',
-            component: ToggleableDoc
-        },
-        {
-            id: 'template',
-            label: 'Template',
-            component: TemplateDoc
-        },
-        {
-            id: 'style',
-            label: 'Style',
-            component: StyleDoc
-        },
-        {
-            id: 'accessibility',
-            label: 'Accessibility',
-            component: AccessibilityDoc
         }
+        // {
+        //     id: 'toggleable',
+        //     label: 'Toggleable',
+        //     component: ToggleableDoc
+        // },
+        // {
+        //     id: 'template',
+        //     label: 'Template',
+        //     component: TemplateDoc
+        // },
+        // {
+        //     id: 'style',
+        //     label: 'Style',
+        //     component: StyleDoc
+        // },
+        // {
+        //     id: 'accessibility',
+        //     label: 'Accessibility',
+        //     component: AccessibilityDoc
+        // }
     ];
 }
