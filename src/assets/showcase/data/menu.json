@@ -1,16 +1,6 @@
 {
     "data": [
         {
-            "name": "Empty Page",
-            "icon": "pi pi-fw pi-palette",
-            "children": [
-                {
-                    "name": "PassThrough",
-                    "routerLink": "/passthrough"
-                }
-            ]
-        },
-        {
             "name": "Getting Started",
             "icon": "pi pi-home",
             "children": [
