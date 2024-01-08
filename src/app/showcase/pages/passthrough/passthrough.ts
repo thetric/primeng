@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { BindModule } from 'primeng/bind';
+import { Bind } from 'primeng/bind';
 
 @Component({
     standalone: true,
     selector: 'passhthrough',
-    imports: [CommonModule, BindModule],
+    imports: [CommonModule, Bind],
     template: `
         <button (click)="updateStyle()">click</button>
         <div

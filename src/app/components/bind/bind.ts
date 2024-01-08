@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Input, Directive, NgModule, ElementRef, Renderer2 } from '@angular/core';
+import { Input, Directive, NgModule, ElementRef, Renderer2, SimpleChanges } from '@angular/core';
 import { ObjectUtils } from 'primeng/utils';
 import { DomHandler } from 'primeng/dom';
 
 @Directive({
-    selector: '[pBind]'
+    selector: '[pBind]',
+    standalone: true
 })
 export class Bind {
     @Input('pBind') attrs: { [key: string]: any };
@@ -15,7 +16,12 @@ export class Bind {
         this.host = this.el.nativeElement;
     }
 
-    ngOnInit() {
+    // ngOnInit() {
+    //     this.bind();
+    // }
+
+    ngOnChanges(changes: SimpleChanges) {
+        this.attrs = changes.attrs.currentValue;
         this.bind();
     }
 
@@ -101,10 +107,3 @@ export class Bind {
         };
     }
 }
-
-@NgModule({
-    imports: [CommonModule],
-    exports: [Bind],
-    declarations: [Bind]
-})
-export class BindModule {}

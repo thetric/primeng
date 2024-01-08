@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { Code } from '../../domain/code';
 
 @Component({
@@ -8,7 +8,7 @@ import { Code } from '../../domain/code';
             <p>A simple Panel is created with a <i>header</i> property along with the content as children.</p>
         </app-docsectiontext>
         <div class="card flex justify-content-center">
-            <p-panel header="Header" [toggleable]="true">
+            <p-panel header="Header1" [toggleable]="true" [pt]="{ root: { class: 'hello-world' } }">
                 <p>
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
                     consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
@@ -19,6 +19,7 @@ import { Code } from '../../domain/code';
     `
 })
 export class BasicDoc {
+    constructor(public cd: ChangeDetectorRef) {}
     code: Code = {
         basic: `<p-panel header="Header">
     <p>

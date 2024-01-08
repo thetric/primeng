@@ -9,6 +9,7 @@ import { Nullable } from 'primeng/ts-helpers';
 import { UniqueComponentId } from 'primeng/utils';
 import { PanelAfterToggleEvent, PanelBeforeToggleEvent } from './panel.interface';
 import { BasePanel } from './basepanel';
+import { Bind } from 'primeng/bind';
 
 /**
  * Panel is a container with the optional content toggle feature.
@@ -17,8 +18,8 @@ import { BasePanel } from './basepanel';
 @Component({
     selector: 'p-panel',
     template: `
-        <div [attr.id]="id" [attr.data-pc-name]="'panel'" [ngClass]="{ 'p-panel p-component': true, 'p-panel-toggleable': toggleable, 'p-panel-expanded': !collapsed && toggleable }" [ngStyle]="style" [class]="styleClass">
-            <div class="p-panel-header" *ngIf="showHeader" (click)="onHeaderClick($event)" [attr.id]="id + '-titlebar'">
+        <div [attr.id]="id" [pBind]="ptm('root')" [ngClass]="cx('root')" [ngStyle]="style" [class]="styleClass">
+            <div [ngClass]="cx('header')" *ngIf="showHeader" (click)="onHeaderClick($event)" [attr.id]="id + '-titlebar'">
                 <span class="p-panel-title" *ngIf="header" [attr.id]="id + '_header'">{{ header }}</span>
                 <ng-content select="p-header"></ng-content>
                 <ng-container *ngTemplateOutlet="headerTemplate"></ng-container>
@@ -288,7 +289,7 @@ export class Panel extends BasePanel implements AfterContentInit, BlockableUI {
 }
 
 @NgModule({
-    imports: [BasePanel, CommonModule, SharedModule, RippleModule, PlusIcon, MinusIcon],
+    imports: [BasePanel, Bind, CommonModule, SharedModule, RippleModule, PlusIcon, MinusIcon],
     exports: [Panel, SharedModule],
     declarations: [Panel]
 })

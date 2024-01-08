@@ -235,4 +235,50 @@ export class ObjectUtils {
         // convert snake, kebab, camel and pascal cases to flat case
         return this.isString(str) ? str.replace(/(-|_)/g, '').toLowerCase() : str;
     }
+
+    public static mergeProps(...props) {
+        if (props) {
+            const isFn = (o) => !!(o && o.constructor && o.call && o.apply);
+
+            const a = props.reduce((merged, ps) => {
+                for (const key in ps) {
+                    const value = ps[key];
+
+                    if (key === 'style') {
+                        merged['style'] = { ...merged['style'], ...ps['style'] };
+                    } else if (key === 'class') {
+                        let newClass = [merged['class'], ps['class']].join(' ').trim();
+                        const isEmpty = newClass === null || newClass === undefined || newClass === '';
+
+                        merged['class'] = isEmpty ? undefined : newClass;
+                    } else if (isFn(value)) {
+                        const fn = merged[key];
+
+                        merged[key] = fn
+                            ? (...args) => {
+                                  fn(...args);
+                                  value(...args);
+                              }
+                            : value;
+                    } else {
+                        merged[key] = value;
+                    }
+                }
+
+                return merged;
+            }, {});
+
+            return a;
+        }
+
+        return undefined;
+    }
+
+    public static isArray(value, empty = true) {
+        return Array.isArray(value) && (empty || value.length !== 0);
+    }
+
+    public static isObject(value, empty = true) {
+        return value instanceof Object && value.constructor === Object && (empty || Object.keys(value).length !== 0);
+    }
 }
