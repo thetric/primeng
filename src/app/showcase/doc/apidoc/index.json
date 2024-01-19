@@ -3875,7 +3875,7 @@
                             "name": "optionLabel",
                             "optional": false,
                             "readonly": false,
-                            "type": "string",
+                            "type": "string | Function",
                             "description": "Property name or getter function to use as the label of an option."
                         },
                         {
@@ -7227,6 +7227,14 @@
                             "description": "Whether to allow duplicate values or not."
                         },
                         {
+                            "name": "caseSensitiveDuplication",
+                            "optional": false,
+                            "readonly": false,
+                            "type": "boolean",
+                            "default": "true",
+                            "description": "Defines whether duplication check should be case-sensitive"
+                        },
+                        {
                             "name": "inputStyle",
                             "optional": false,
                             "readonly": false,
@@ -9650,7 +9658,8 @@
                             "readonly": false,
                             "type": "boolean",
                             "default": "true",
-                            "description": "Whether to display the first item as the label if no placeholder is defined and value is null."
+                            "description": "Whether to display the first item as the label if no placeholder is defined and value is null.",
+                            "deprecated": "since v17.3.0, set initial value by model instead."
                         },
                         {
                             "name": "group",
@@ -9658,8 +9667,7 @@
                             "readonly": false,
                             "type": "boolean",
                             "default": "false",
-                            "description": "Whether to display options as grouped when nested options are provided.",
-                            "deprecated": "since v17.3.0, set initial value by model instead."
+                            "description": "Whether to display options as grouped when nested options are provided."
                         },
                         {
                             "name": "showClear",
@@ -13952,7 +13960,7 @@
                             "optional": false,
                             "readonly": false,
                             "type": "boolean",
-                            "default": "true",
+                            "default": "false",
                             "description": "Defines how multiple items can be selected, when true metaKey needs to be pressed to select or unselect an item and when set to false selection of each item can be toggled individually. On touch enabled devices, metaKeySelection is turned off automatically."
                         },
                         {
@@ -15965,7 +15973,7 @@
                             "optional": false,
                             "readonly": false,
                             "type": "boolean",
-                            "default": "true",
+                            "default": "false",
                             "description": "When true metaKey needs to be pressed to select or unselect an item and when set to false selection of each item can be toggled individually. On touch enabled devices, metaKeySelection is turned off automatically."
                         },
                         {
@@ -17072,6 +17080,12 @@
                 "values": [
                     {
                         "parent": "paginator",
+                        "name": "dropdownicon",
+                        "parameters": [],
+                        "description": "Custom dropdown trigger icon template."
+                    },
+                    {
+                        "parent": "paginator",
                         "name": "firstpagelinkicon",
                         "parameters": [],
                         "description": "Custom first page link icon template."
@@ -17928,7 +17942,7 @@
                             "optional": false,
                             "readonly": false,
                             "type": "boolean",
-                            "default": "true",
+                            "default": "false",
                             "description": "Defines how multiple items can be selected, when true metaKey needs to be pressed to select or unselect an item and when set to false selection of each item can be toggled individually. On touch enabled devices, metaKeySelection is turned off automatically."
                         },
                         {
@@ -21639,7 +21653,7 @@
                             "optional": false,
                             "readonly": false,
                             "type": "boolean",
-                            "default": "true",
+                            "default": "false",
                             "description": "Defines whether metaKey should be considered for the selection. On touch enabled devices, metaKeySelection is turned off automatically."
                         },
                         {
@@ -23211,6 +23225,12 @@
                         "name": "paginatorright",
                         "parameters": [],
                         "description": "Custom paginator right template."
+                    },
+                    {
+                        "parent": "table",
+                        "name": "paginatordropdownicon",
+                        "parameters": [],
+                        "description": "Custom paginator dropdown trigger icon template."
                     },
                     {
                         "parent": "table",
@@ -24829,7 +24849,7 @@
                             "optional": false,
                             "readonly": false,
                             "type": "boolean",
-                            "default": "true",
+                            "default": "false",
                             "description": "Defines how multiple items can be selected, when true metaKey needs to be pressed to select or unselect an item and when set to false selection of each item can be toggled individually. On touch enabled devices, metaKeySelection is turned off automatically."
                         },
                         {
@@ -25492,7 +25512,7 @@
                             "optional": false,
                             "readonly": false,
                             "type": "boolean",
-                            "default": "true",
+                            "default": "false",
                             "description": "Defines how multiple items can be selected, when true metaKey needs to be pressed to select or unselect an item and when set to false selection of each item can be toggled individually. On touch enabled devices, metaKeySelection is turned off automatically."
                         },
                         {
@@ -26179,7 +26199,7 @@
                             "optional": false,
                             "readonly": false,
                             "type": "boolean",
-                            "default": "true",
+                            "default": "false",
                             "description": "Defines whether metaKey is should be considered for the selection. On touch enabled devices, metaKeySelection is turned off automatically."
                         },
                         {

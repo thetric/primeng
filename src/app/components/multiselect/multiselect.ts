@@ -737,7 +737,9 @@ export class MultiSelect implements OnInit, AfterViewInit, AfterContentInit, Aft
         return options;
     }
     set options(val: any[] | undefined) {
-        this._options.set(val);
+        if (!ObjectUtils.deepEquals(this._options(), val)) {
+            this._options.set(val);
+        }
     }
     /**
      * When specified, filter displays with this value.
@@ -1090,11 +1092,11 @@ export class MultiSelect implements OnInit, AfterViewInit, AfterContentInit, Aft
             const modelValue = this.modelValue();
 
             const visibleOptions = this.visibleOptions();
-            if (visibleOptions && ObjectUtils.isNotEmpty(visibleOptions) && modelValue) {
-                if (this.optionValue && this.optionLabel) {
+            if (visibleOptions && ObjectUtils.isNotEmpty(visibleOptions)) {
+                if (this.optionValue && this.optionLabel && modelValue) {
                     this.selectedOptions = visibleOptions.filter((option) => modelValue.includes(option[this.optionLabel]) || modelValue.includes(option[this.optionValue]));
                 } else {
-                    this.selectedOptions = [...modelValue];
+                    this.selectedOptions = modelValue;
                 }
                 this.cd.markForCheck();
             }

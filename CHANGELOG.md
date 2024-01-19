@@ -1,4 +1,53 @@
 # Changelog
+## [17.3.3](https://github.com/primefaces/primeng/tree/17.3.3) (2024-01-18)
+
+[Full Changelog](https://github.com/primefaces/primeng/compare/17.3.2...17.3.3)
+
+**Fixed bugs:**
+- Component: Carousel swipe not working properly on iOS devices [\#12942](https://github.com/primefaces/primeng/issues/12942)
+- Autocomplete: focus not being applied when clicking around input [\#14530](https://github.com/primefaces/primeng/issues/14530)
+- Chips: NumpadEnter being ignored [\#14578](https://github.com/primefaces/primeng/issues/14578)
+- Component: Chips: Invalid aria attribute: aria-pointset (should be aria-posinset) [\#14568](https://github.com/primefaces/primeng/issues/14568)
+- Button | StyleClass does not work as expected [\#14583](https://github.com/primefaces/primeng/issues/14583)
+- Calendar: Calendar Icon has a default cursor on hover [\#14501](https://github.com/primefaces/primeng/issues/14501)
+- SSR Duplicate elements with provideClientHydration() [\#14569](https://github.com/primefaces/primeng/issues/14569)
+- TreeTable with scrollHeight="flex" shrinks the header as the table rows are expanded. [\#14523](https://github.com/primefaces/primeng/issues/14523)
+- Table | Column filter in stateful is become 'undefined' [\#14571](https://github.com/primefaces/primeng/issues/14571)
+- Component: dropdown - Editable dropdown does not change value to empty string [\#14546](https://github.com/primefaces/primeng/issues/14546)
+- PrimeNG table filtering and sorting on each column- filter is not opening with keyboard [\#14545](https://github.com/primefaces/primeng/issues/14545)
+- GalleriaThumbnail afterViewInit use platformBrowser instead of isPlatformBrowser [\#14553](https://github.com/primefaces/primeng/issues/14553)
+- p-columnfilter: missing aria-label [\#14537](https://github.com/primefaces/primeng/issues/14537)
+- Component: Chips. Duplicate validation is case sensitive [\#14550](https://github.com/primefaces/primeng/issues/14550)
+- Paginator / Table: Configurable Dropdown Icon [\#9605](https://github.com/primefaces/primeng/issues/9605)
+- Chart component should runOutsideOfAngular [\#14561](https://github.com/primefaces/primeng/issues/14561)
+- Component: Table. Export CSV with cyrillic or chinese characters has broken encoding in Microsoft Excel [\#14562](https://github.com/primefaces/primeng/issues/14562)
+- p-table: columnFilter p-calendar cropped by overflow [\#14564](https://github.com/primefaces/primeng/issues/14564)
+- EditableColumn: error in ngOnChanges when input other than data changes [\#14525](https://github.com/primefaces/primeng/issues/14525)
+- SplitButton contains a typo on "aria-haspopup" attribute [\#14533](https://github.com/primefaces/primeng/issues/14533)
+- Calendar: Datepicker is hidden on PrimeNg homepage [\#14547](https://github.com/primefaces/primeng/issues/14547)
+
+## [17.3.2](https://github.com/primefaces/primeng/tree/17.3.2) (2024-01-10)
+
+[Full Changelog](https://github.com/primefaces/primeng/compare/17.3.1...17.3.2)
+
+**Fixed bugs:**
+- Panel: id increments within component [\#14508](https://github.com/primefaces/primeng/issues/14508)
+- p-inputNumber: With suffix and minDigits > 0, negative numbers lead to an unexpected cursor jump and frozen inputs [\#13651](https://github.com/primefaces/primeng/issues/13651)
+- AutoComplete: Unique option doesn't work [\#14505](https://github.com/primefaces/primeng/issues/14505)
+- p-dropdown: selecting an option or clearing the value should clear the filter input [\#14503](https://github.com/primefaces/primeng/issues/14503)
+- p-autocomplete: optionLabel input has wrong type [\#14468](https://github.com/primefaces/primeng/issues/14468)
+- p-dropdown: Cannot clear dropdown value [\#14513](https://github.com/primefaces/primeng/issues/14513)
+- p-checkbox firing onClick event twice when clicking the label if inputId is populated [\#14487](https://github.com/primefaces/primeng/issues/14487)
+- p-multiselect is not resetting when using with reactive form [\#14490](https://github.com/primefaces/primeng/issues/14490)
+- Dropdown: Infinite loop dynamic options array [\#14319](https://github.com/primefaces/primeng/issues/14319)
+- Component: Dropdown TypeError: option.toLowerCase is not a function (PringNG 17.0 + 17.1) [\#14370](https://github.com/primefaces/primeng/issues/14370)
+- Accordian : TextArea shortcuts are not working when used in Accordian Panels [\#14368](https://github.com/primefaces/primeng/issues/14368)
+- Dropdown: required attribute not set in hidden input element [\#14322](https://github.com/primefaces/primeng/issues/14322)
+- Component: p-treeSelect - Material Design theme does not highlight items [\#14453](https://github.com/primefaces/primeng/issues/14453)
+- Calendar: component emit different format on load then after change [\#14484](https://github.com/primefaces/primeng/issues/14484)
+- p-dropdown: FilterBy multiple values is not working [\#14492](https://github.com/primefaces/primeng/issues/14492)
+- Table Virtual Scroll with Fixed Columns and Lazy Loading Causes Erratic Scrolling and Incomplete Data Display [\#14488](https://github.com/primefaces/primeng/issues/14488)
+
 ## [17.3.1](https://github.com/primefaces/primeng/tree/17.3.1) (2024-01-04)
 
 [Full Changelog](https://github.com/primefaces/primeng/compare/17.3.0...17.3.1)

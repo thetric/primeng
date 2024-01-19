@@ -1,16 +1,13 @@
 import { animate, AnimationEvent, style, transition, trigger } from '@angular/animations';
 import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
 import {
-    AfterContentChecked,
     AfterContentInit,
-    AfterViewChecked,
     AfterViewInit,
     ChangeDetectionStrategy,
     ChangeDetectorRef,
     Component,
     ContentChildren,
     Directive,
-    DoCheck,
     ElementRef,
     EventEmitter,
     HostListener,
@@ -33,28 +30,29 @@ import {
     ViewEncapsulation
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { BlockableUI, FilterMatchMode, FilterMetadata, FilterOperator, FilterService, LazyLoadMeta, OverlayService, PrimeNGConfig, PrimeTemplate, SelectItem, SharedModule, SortMeta, TableState, TranslationKeys } from 'primeng/api';
+import { BlockableUI, FilterMatchMode, FilterMetadata, FilterOperator, FilterService, LazyLoadMeta, OverlayService, PrimeNGConfig, PrimeTemplate, ScrollerOptions, SelectItem, SharedModule, SortMeta, TableState, TranslationKeys } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { CalendarModule } from 'primeng/calendar';
 import { ConnectedOverlayScrollHandler, DomHandler } from 'primeng/dom';
 import { DropdownModule } from 'primeng/dropdown';
-import { InputNumberModule } from 'primeng/inputnumber';
-import { InputTextModule } from 'primeng/inputtext';
-import { PaginatorModule } from 'primeng/paginator';
-import { Scroller, ScrollerModule } from 'primeng/scroller';
-import { ScrollerOptions } from 'primeng/api';
-import { SelectButtonModule } from 'primeng/selectbutton';
-import { TriStateCheckboxModule } from 'primeng/tristatecheckbox';
-import { ObjectUtils, UniqueComponentId, ZIndexUtils } from 'primeng/utils';
-import { Subject, Subscription } from 'rxjs';
 import { ArrowDownIcon } from 'primeng/icons/arrowdown';
 import { ArrowUpIcon } from 'primeng/icons/arrowup';
 import { CheckIcon } from 'primeng/icons/check';
 import { FilterIcon } from 'primeng/icons/filter';
+import { FilterSlashIcon } from 'primeng/icons/filterslash';
 import { SortAltIcon } from 'primeng/icons/sortalt';
 import { SortAmountDownIcon } from 'primeng/icons/sortamountdown';
 import { SortAmountUpAltIcon } from 'primeng/icons/sortamountupalt';
 import { SpinnerIcon } from 'primeng/icons/spinner';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { InputTextModule } from 'primeng/inputtext';
+import { PaginatorModule } from 'primeng/paginator';
+import { Scroller, ScrollerModule } from 'primeng/scroller';
+import { SelectButtonModule } from 'primeng/selectbutton';
+import { TriStateCheckboxModule } from 'primeng/tristatecheckbox';
+import { Nullable, VoidListener } from 'primeng/ts-helpers';
+import { ObjectUtils, UniqueComponentId, ZIndexUtils } from 'primeng/utils';
+import { Subject, Subscription } from 'rxjs';
 import {
     ExportCSVOptions,
     TableColResizeEvent,
@@ -74,9 +72,6 @@ import {
     TableRowUnSelectEvent,
     TableSelectAllChangeEvent
 } from './table.interface';
-import { Nullable, VoidListener } from 'primeng/ts-helpers';
-import { FilterSlashIcon } from 'primeng/icons/filterslash';
-import { platformBrowser } from '@angular/platform-browser';
 
 @Injectable()
 export class TableService {
@@ -168,6 +163,10 @@ export class TableService {
                 [styleClass]="paginatorStyleClass"
                 [locale]="paginatorLocale"
             >
+                <ng-template pTemplate="dropdownicon" *ngIf="paginatorDropdownIconTemplate">
+                    <ng-container *ngTemplateOutlet="paginatorDropdownIconTemplate"></ng-container>
+                </ng-template>
+
                 <ng-template pTemplate="firstpagelinkicon" *ngIf="paginatorFirstPageLinkIconTemplate">
                     <ng-container *ngTemplateOutlet="paginatorFirstPageLinkIconTemplate"></ng-container>
                 </ng-template>
@@ -283,6 +282,10 @@ export class TableService {
                 [styleClass]="paginatorStyleClass"
                 [locale]="paginatorLocale"
             >
+                <ng-template pTemplate="dropdownicon" *ngIf="paginatorDropdownIconTemplate">
+                    <ng-container *ngTemplateOutlet="paginatorDropdownIconTemplate"></ng-container>
+                </ng-template>
+
                 <ng-template pTemplate="firstpagelinkicon" *ngIf="paginatorFirstPageLinkIconTemplate">
                     <ng-container *ngTemplateOutlet="paginatorFirstPageLinkIconTemplate"></ng-container>
                 </ng-template>
@@ -1048,6 +1051,8 @@ export class Table implements OnInit, AfterViewInit, AfterContentInit, Blockable
 
     headerCheckboxIconTemplate: Nullable<TemplateRef<any>>;
 
+    paginatorDropdownIconTemplate: Nullable<TemplateRef<any>>;
+
     paginatorFirstPageLinkIconTemplate: Nullable<TemplateRef<any>>;
 
     paginatorLastPageLinkIconTemplate: Nullable<TemplateRef<any>>;
@@ -1250,6 +1255,10 @@ export class Table implements OnInit, AfterViewInit, AfterContentInit, Blockable
 
                 case 'paginatorright':
                     this.paginatorRightTemplate = item.template;
+                    break;
+
+                case 'paginatordropdownicon':
+                    this.paginatorDropdownIconTemplate = item.template;
                     break;
 
                 case 'paginatordropdownitem':
@@ -2296,7 +2305,7 @@ export class Table implements OnInit, AfterViewInit, AfterContentInit, Blockable
             csv += '\n' + body;
         }
 
-        let blob = new Blob([csv], {
+        let blob = new Blob([new Uint8Array([0xef, 0xbb, 0xbf]), csv], {
             type: 'text/csv;charset=utf-8;'
         });
 
@@ -3268,7 +3277,7 @@ export class FrozenColumn implements AfterViewInit {
 
     set frozen(val: boolean) {
         this._frozen = val;
-        this.updateStickyPosition();
+        Promise.resolve(null).then(() => this.updateStickyPosition());
     }
 
     @Input() alignFrozen: string = 'left';
@@ -4068,8 +4077,8 @@ export class EditableColumn implements OnChanges, AfterViewInit, OnDestroy {
 
     constructor(public dt: Table, public el: ElementRef, public zone: NgZone) {}
 
-    public ngOnChanges({ data }: SimpleChanges): void {
-        if (this.el.nativeElement && !data.firstChange) {
+    public ngOnChanges(changes: SimpleChanges): void {
+        if (this.el.nativeElement && !changes.data?.firstChange) {
             this.dt.updateEditingCell(this.el.nativeElement, this.data, this.field, <number>this.rowIndex);
         }
     }
@@ -4929,7 +4938,7 @@ export class ReorderableRow implements AfterViewInit {
                 type="button"
                 class="p-column-filter-menu-button p-link"
                 aria-haspopup="true"
-                [attr.aria-label]="showMenuButtonAriaLabel"
+                [attr.aria-label]="showMenuButtonLabel"
                 [attr.aria-controls]="overlayId"
                 [attr.aria-expanded]="overlayVisible"
                 [ngClass]="{ 'p-column-filter-menu-button-open': overlayVisible, 'p-column-filter-menu-button-active': hasFilter() }"
@@ -5236,6 +5245,10 @@ export class ColumnFilter implements AfterContentInit {
         return this.showAddButton && this.type !== 'boolean' && this.fieldConstraints && this.fieldConstraints.length < this.maxConstraints;
     }
 
+    get showMenuButtonLabel() {
+        return this.config.getTranslation(TranslationKeys.SHOW_FILTER_MENU);
+    }
+
     get applyButtonLabel(): string {
         return this.config.getTranslation(TranslationKeys.APPLY);
     }
@@ -5444,6 +5457,10 @@ export class ColumnFilter implements AfterContentInit {
                     this.overlayVisible = true;
                     event.preventDefault();
                 }
+                break;
+            case 'Enter':
+                this.toggleMenu();
+                event.preventDefault();
                 break;
         }
     }
@@ -5711,7 +5728,7 @@ export class ColumnFilter implements AfterContentInit {
                     [useGrouping]="useGrouping"
                 ></p-inputNumber>
                 <p-triStateCheckbox *ngSwitchCase="'boolean'" [ngModel]="filterConstraint?.value" (ngModelChange)="onModelChange($event)"></p-triStateCheckbox>
-                <p-calendar *ngSwitchCase="'date'" [placeholder]="placeholder" [ngModel]="filterConstraint?.value" (ngModelChange)="onModelChange($event)"></p-calendar>
+                <p-calendar *ngSwitchCase="'date'" [placeholder]="placeholder" [ngModel]="filterConstraint?.value" (ngModelChange)="onModelChange($event)" appendTo="body"></p-calendar>
             </ng-container>
         </ng-template>
     `,

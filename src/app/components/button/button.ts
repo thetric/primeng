@@ -152,7 +152,8 @@ export class ButtonDirective implements AfterViewInit, OnDestroy {
     }
 
     createLabel() {
-        if (this.label) {
+        const created = DomHandler.findSingle(this.htmlElement, '.p-button-label');
+        if (!created && this.label) {
             let labelElement = this.document.createElement('span');
             if (this.icon && !this.label) {
                 labelElement.setAttribute('aria-hidden', 'true');
@@ -166,7 +167,8 @@ export class ButtonDirective implements AfterViewInit, OnDestroy {
     }
 
     createIcon() {
-        if (this.icon || this.loading) {
+        const created = DomHandler.findSingle(this.htmlElement, '.p-button-icon');
+        if (!created && (this.icon || this.loading)) {
             let iconElement = this.document.createElement('span');
             iconElement.className = 'p-button-icon';
             iconElement.setAttribute('aria-hidden', 'true');
@@ -240,10 +242,9 @@ export class ButtonDirective implements AfterViewInit, OnDestroy {
         <button
             [attr.type]="type"
             [attr.aria-label]="ariaLabel"
-            [class]="styleClass"
             [ngStyle]="style"
             [disabled]="disabled || loading"
-            [ngClass]="buttonClass()"
+            [ngClass]="buttonClass"
             (click)="onClick.emit($event)"
             (focus)="onFocus.emit($event)"
             (blur)="onBlur.emit($event)"
@@ -426,7 +427,7 @@ export class Button implements AfterContentInit {
         };
     }
 
-    buttonClass() {
+    get buttonClass() {
         return {
             'p-button p-component': true,
             'p-button-icon-only': (this.icon || this.iconTemplate || this.loadingIcon || this.loadingIconTemplate) && !this.label,
