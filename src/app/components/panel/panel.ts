@@ -1,6 +1,6 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { CommonModule } from '@angular/common';
-import { AfterContentInit, ChangeDetectionStrategy, Component, ContentChild, ContentChildren, ElementRef, EventEmitter, Input, NgModule, Output, QueryList, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
+import { AfterContentInit, ChangeDetectionStrategy, Component, ContentChild, ContentChildren, ElementRef, EventEmitter, Input, NgModule, Output, QueryList, SimpleChanges, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { BlockableUI, Footer, PrimeTemplate, SharedModule } from 'primeng/api';
 import { MinusIcon } from 'primeng/icons/minus';
 import { PlusIcon } from 'primeng/icons/plus';
@@ -115,75 +115,11 @@ import { Bind } from 'primeng/bind';
     inputs: ['toggleable', 'header', 'collapsed']
 })
 export class Panel extends BasePanel implements AfterContentInit, BlockableUI {
-    /**
-     * Inline style of the component.
-     * @group Props
-     */
-    @Input() style: { [klass: string]: any } | null | undefined;
-    /**
-     * Style class of the component.
-     * @group Props
-     */
-    @Input() styleClass: string | undefined;
-    /**
-     * Position of the icons.
-     * @group Props
-     */
-    @Input() iconPos: 'start' | 'end' | 'center' = 'end';
-    /**
-     * Expand icon of the toggle button.
-     * @group Props
-     * @deprecated since v15.4.2, use `headericons` template instead.
-     */
-    @Input() expandIcon: string | undefined;
-    /**
-     * Collapse icon of the toggle button.
-     * @group Props
-     * @deprecated since v15.4.2, use `headericons` template instead.
-     */
-    @Input() collapseIcon: string | undefined;
-    /**
-     * Specifies if header of panel cannot be displayed.
-     * @group Props
-     * @deprecated since v15.4.2, use `headericons` template instead.
-     */
-    @Input() showHeader: boolean = true;
-    /**
-     * Specifies the toggler element to toggle the panel content.
-     * @group Props
-     */
-    @Input() toggler: 'icon' | 'header' = 'icon';
-    /**
-     * Transition options of the animation.
-     * @group Props
-     */
-    @Input() transitionOptions: string = '400ms cubic-bezier(0.86, 0, 0.07, 1)';
-    /**
-     * Emitted when the collapsed changes.
-     * @param {boolean} value - New Value.
-     * @group Emits
-     */
-    @Output() collapsedChange: EventEmitter<boolean> = new EventEmitter<boolean>();
-    /**
-     * Callback to invoke before panel toggle.
-     * @param {PanelBeforeToggleEvent} event - Custom panel toggle event
-     * @group Emits
-     */
-    @Output() onBeforeToggle: EventEmitter<PanelBeforeToggleEvent> = new EventEmitter<PanelBeforeToggleEvent>();
-    /**
-     * Callback to invoke after panel toggle.
-     * @param {PanelAfterToggleEvent} event - Custom panel toggle event
-     * @group Emits
-     */
-    @Output() onAfterToggle: EventEmitter<PanelAfterToggleEvent> = new EventEmitter<PanelAfterToggleEvent>();
-
     @ContentChild(Footer) footerFacet: Nullable<TemplateRef<any>>;
 
     @ContentChildren(PrimeTemplate) templates: Nullable<QueryList<PrimeTemplate>>;
 
     public iconTemplate: Nullable<TemplateRef<any>>;
-
-    animating: Nullable<boolean>;
 
     headerTemplate: Nullable<TemplateRef<any>>;
 

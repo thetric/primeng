@@ -4,7 +4,14 @@ import name from './style/panelstyle';
 import classes from './style/panelstyle';
 import css from './style/panelstyle';
 
-import { Directive, Input } from '@angular/core';
+import { Directive, EventEmitter, Input, Output, SimpleChanges } from '@angular/core';
+import { PanelBeforeToggleEvent, PanelAfterToggleEvent } from './panel.interface';
+import { Nullable } from 'primeng/ts-helpers';
+export interface Props {
+    inputs: { [klass: string]: any };
+    outputs: { [klass: string]: any };
+    state: { [klass: string]: any };
+}
 
 @Directive({ standalone: true })
 export class BasePanel extends BaseComponent {
@@ -23,13 +30,115 @@ export class BasePanel extends BaseComponent {
      * @group Props
      */
     @Input() collapsed: boolean | undefined;
+    /**
+     * Inline style of the component.
+     * @group Props
+     */
+    @Input() style: { [klass: string]: any } | null | undefined;
+    /**
+     * Style class of the component.
+     * @group Props
+     */
+    @Input() styleClass: string | undefined;
+    /**
+     * Position of the icons.
+     * @group Props
+     */
+    @Input() iconPos: 'start' | 'end' | 'center' = 'end';
+    /**
+     * Expand icon of the toggle button.
+     * @group Props
+     * @deprecated since v15.4.2, use `headericons` template instead.
+     */
+    @Input() expandIcon: string | undefined;
+    /**
+     * Collapse icon of the toggle button.
+     * @group Props
+     * @deprecated since v15.4.2, use `headericons` template instead.
+     */
+    @Input() collapseIcon: string | undefined;
+    /**
+     * Specifies if header of panel cannot be displayed.
+     * @group Props
+     * @deprecated since v15.4.2, use `headericons` template instead.
+     */
+    @Input() showHeader: boolean = true;
+    /**
+     * Specifies the toggler element to toggle the panel content.
+     * @group Props
+     */
+    @Input() toggler: 'icon' | 'header' = 'icon';
+    /**
+     * Transition options of the animation.
+     * @group Props
+     */
+    @Input() transitionOptions: string = '400ms cubic-bezier(0.86, 0, 0.07, 1)';
+    /**
+     * Emitted when the collapsed changes.
+     * @param {boolean} value - New Value.
+     * @group Emits
+     */
+    @Output() collapsedChange: EventEmitter<boolean> = new EventEmitter<boolean>();
+    /**
+     * Callback to invoke before panel toggle.
+     * @param {PanelBeforeToggleEvent} event - Custom panel toggle event
+     * @group Emits
+     */
+    @Output() onBeforeToggle: EventEmitter<PanelBeforeToggleEvent> = new EventEmitter<PanelBeforeToggleEvent>();
+    /**
+     * Callback to invoke after panel toggle.
+     * @param {PanelAfterToggleEvent} event - Custom panel toggle event
+     * @group Emits
+     */
+    @Output() onAfterToggle: EventEmitter<PanelAfterToggleEvent> = new EventEmitter<PanelAfterToggleEvent>();
+
+    animating: Nullable<boolean>;
+
+    props: Props = {
+        inputs: {},
+        outputs: {},
+        state: {}
+    };
+
+    ngOnInit() {
+        this.props['inputs'] = {
+            toggler: this.toggler,
+            style: this.style,
+            styleClass: this.styleClass,
+            iconPos: this.iconPos,
+            expandIcon: this.expandIcon,
+            collapseIcon: this.collapseIcon,
+            showHeader: this.showHeader,
+            transitionOptions: this.transitionOptions,
+            header: this.header,
+            toggleable: this.toggleable,
+            collapsed: this.collapsed
+        };
+
+        this.props['outputs'] = {
+            collapsedChange: this.collapsedChange,
+            onBeforeToggle: this.onBeforeToggle,
+            onAfterToggle: this.onAfterToggle
+        };
+
+        this.props['state'] = {
+            animating: this.animating
+        };
+    }
+
+    ngOnChanges(changes: SimpleChanges) {
+        console.log('changes', changes);
+    }
 
     classes = {
-        root: () => ({
-            'p-panel p-component': true,
-            'p-panel-toggleable': this.toggleable,
-            'p-panel-expanded': !this.collapsed && this.toggleable
-        }),
+        root: (props = this.props.inputs) => {
+            console.log(this.props.inputs);
+            return {
+                'p-panel p-component': true,
+                'p-panel-toggleable': props.toggleable,
+                'p-panel-expanded': !props.collapsed && props.toggleable
+            };
+        },
         header: 'p-panel-header',
         title: 'p-panel-title',
         icon: 'p-panel-icons',

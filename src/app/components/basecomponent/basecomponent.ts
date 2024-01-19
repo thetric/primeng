@@ -12,7 +12,7 @@ export class BaseComponent {
 
     parentEl: ElementRef | undefined;
 
-    constructor(public el: ElementRef) {}
+    constructor(public el: ElementRef, public vc: ViewContainerRef) {}
 
     ngOnChanges(changes: SimpleChanges) {
         if (changes && changes.pt && changes.pt.currentValue) {
@@ -83,7 +83,7 @@ export class BaseComponent {
         const [options, key = '', params = {}] = args;
         const fKeys = ObjectUtils.toFlatCase(key).split('.');
         const fKey = fKeys.shift();
-
+        // console.log('optval', options, key, params);
         return fKey
             ? ObjectUtils.isObject(options)
                 ? this._getOptionValue(ObjectUtils.getItemValue(options[Object.keys(options).find((k) => ObjectUtils.toFlatCase(k) === fKey) || ''], params), fKeys.join('.'), params)
@@ -103,7 +103,9 @@ export class BaseComponent {
         const instance = this._getHostInstance(this);
         // TODO: add props etc.
         return {
-            instance: instance
+            instance: instance,
+            //@ts-ignore
+            props: instance?.props
         };
     }
 
@@ -115,7 +117,7 @@ export class BaseComponent {
         // @ts-ignore
         const classes = this.classes;
         if (!this.unstyled) {
-            return this._getOptionValue(classes, key, { ...this.params, ...params });
+            return this._getOptionValue(classes, key, { ...this.params(), ...params });
         } else {
             return undefined;
         }

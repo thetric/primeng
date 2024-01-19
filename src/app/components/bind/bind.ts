@@ -16,13 +16,11 @@ export class Bind {
         this.host = this.el.nativeElement;
     }
 
-    // ngOnInit() {
-    //     this.bind();
-    // }
-
     ngOnChanges(changes: SimpleChanges) {
-        this.attrs = changes.attrs.currentValue;
-        this.bind();
+        if (changes.attrs.currentValue && ObjectUtils.equals(changes.attrs.currentValue, changes.attrs.previousValue) === false) {
+            this.attrs = changes.attrs.currentValue;
+            this.bind();
+        }
     }
 
     bind() {
@@ -33,12 +31,8 @@ export class Bind {
 
     classes() {
         const classes = this.attrs.class ? this.attrs.class.split(' ') : [];
-        const existingClasses: string[] = [];
-        Array.from(this.host.classList).forEach((className: string) => {
-            existingClasses.push(className);
-        });
-
-        return this.attrs.class ? [...existingClasses, ...classes] : [...existingClasses];
+        const existingClasses: string[] = Array.from(this.host.classList);
+        return Array.from(new Set([...classes, ...existingClasses]));
     }
 
     attributes() {
