@@ -140,6 +140,29 @@ export class PrimeNGConfig {
         }
     };
 
+    // public pt = {
+    //     panel: {
+    //         root: 'cetin'
+    //     },
+    //     accordion: {
+    //         accordionTab:{
+    //             root: 'cetin'
+    //         }
+    //     },
+    //     accordionTab: {}
+    // };
+
+    // public ptOptions: {
+    //     mergeSections: true;
+    //     mergeProps: false;
+    // };
+
+    public pt: any;
+
+    public ptOptions: any;
+
+    unstyled: false;
+
     zIndex: any = {
         modal: 1100,
         overlay: 1000,
