@@ -34,23 +34,23 @@ import { Bind } from 'primeng/bind';
                         class="p-panel-header-icon p-panel-toggler p-link"
                         [attr.aria-label]="buttonAriaLabel"
                         [attr.aria-controls]="id + '_content'"
-                        [attr.aria-expanded]="!collapsed"
+                        [attr.aria-expanded]="!_collapsed()"
                         (click)="onIconClick($event)"
                         (keydown)="onKeyDown($event)"
                     >
                         <ng-container *ngIf="!headerIconTemplate">
-                            <ng-container *ngIf="!collapsed">
+                            <ng-container *ngIf="!_collapsed()">
                                 <span *ngIf="expandIcon" [class]="expandIcon" [ngClass]="iconClass"></span>
                                 <MinusIcon *ngIf="!expandIcon" [styleClass]="iconClass" />
                             </ng-container>
 
-                            <ng-container *ngIf="collapsed">
+                            <ng-container *ngIf="_collapsed()">
                                 <span *ngIf="collapseIcon" [class]="collapseIcon" [ngClass]="iconClass"></span>
                                 <PlusIcon *ngIf="!collapseIcon" [styleClass]="iconClass" />
                             </ng-container>
                         </ng-container>
 
-                        <ng-template *ngTemplateOutlet="headerIconTemplate; context: { $implicit: collapsed }"></ng-template>
+                        <ng-template *ngTemplateOutlet="headerIconTemplate; context: { $implicit: _collapsed() }"></ng-template>
                     </button>
                 </div>
             </div>
@@ -59,10 +59,10 @@ import { Bind } from 'primeng/bind';
                 [id]="id + '_content'"
                 role="region"
                 [attr.aria-labelledby]="id + '_header'"
-                [attr.aria-hidden]="collapsed"
-                [attr.tabindex]="collapsed ? '-1' : undefined"
+                [attr.aria-hidden]="_collapsed()"
+                [attr.tabindex]="_collapsed() ? '-1' : undefined"
                 [@panelContent]="
-                    collapsed
+                    _collapsed()
                         ? { value: 'hidden', params: { transitionParams: animating ? transitionOptions : '0ms', height: '0', opacity: '0' } }
                         : { value: 'visible', params: { transitionParams: animating ? transitionOptions : '0ms', height: '*', opacity: '1' } }
                 "
@@ -180,15 +180,15 @@ export class Panel extends BasePanel implements AfterContentInit, BlockableUI {
     }
 
     toggle(event: MouseEvent) {
-        if (this.animating) {
+        if (this.animating()) {
             return false;
         }
 
-        this.animating = true;
-        this.onBeforeToggle.emit({ originalEvent: event, collapsed: this.collapsed });
+        this.animating.set(true);
+        this.onBeforeToggle.emit({ originalEvent: event, collapsed: this._collapsed() });
 
         if (this.toggleable) {
-            if (this.collapsed) this.expand();
+            if (this._collapsed()) this.expand();
             else this.collapse();
         }
 
@@ -197,12 +197,12 @@ export class Panel extends BasePanel implements AfterContentInit, BlockableUI {
 
     expand() {
         this.collapsed = false;
-        this.collapsedChange.emit(this.collapsed);
+        this.collapsedChange.emit(this._collapsed());
     }
 
     collapse() {
         this.collapsed = true;
-        this.collapsedChange.emit(this.collapsed);
+        this.collapsedChange.emit(this._collapsed());
     }
 
     getBlockableElement(): HTMLElement {
@@ -217,8 +217,8 @@ export class Panel extends BasePanel implements AfterContentInit, BlockableUI {
     }
 
     onToggleDone(event: Event) {
-        this.animating = false;
-        this.onAfterToggle.emit({ originalEvent: event, collapsed: this.collapsed });
+        this.animating.set(false);
+        this.onAfterToggle.emit({ originalEvent: event, collapsed: this._collapsed() });
     }
 }
 

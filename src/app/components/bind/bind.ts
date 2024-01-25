@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Input, Directive, NgModule, ElementRef, Renderer2, SimpleChanges } from '@angular/core';
+import { Input, Directive, NgModule, ElementRef, Renderer2, SimpleChanges, HostBinding, Component, ChangeDetectionStrategy } from '@angular/core';
 import { ObjectUtils } from 'primeng/utils';
 import { DomHandler } from 'primeng/dom';
 
@@ -16,6 +16,10 @@ export class Bind {
         this.host = this.el.nativeElement;
     }
 
+    ngOnInit() {
+        this.bind();
+    }
+
     ngOnChanges(changes: SimpleChanges) {
         if (changes.attrs.currentValue && ObjectUtils.equals(changes.attrs.currentValue, changes.attrs.previousValue) === false) {
             this.attrs = changes.attrs.currentValue;
@@ -24,15 +28,20 @@ export class Bind {
     }
 
     bind() {
-        if (ObjectUtils.isNotEmpty(this.attrs)) {
-            DomHandler.setAttributes(this.host, this.all());
-        }
+        DomHandler.setAttributes(this.host, this.all());
+        this.renderer.setAttribute(this.host, 'class', this.classes().join(' '));
     }
 
     classes() {
-        const classes = this.attrs.class ? this.attrs.class.split(' ') : [];
-        const existingClasses: string[] = Array.from(this.host.classList);
-        return Array.from(new Set([...classes, ...existingClasses]));
+        const classes =
+            typeof this.attrs.class === 'string'
+                ? this.attrs.class.split(' ')
+                : Array.isArray(this.attrs.class)
+                ? this.attrs.class
+                : typeof this.attrs.class === 'object'
+                ? Object.keys(this.attrs.class).filter((key) => this.attrs.class[key] === true)
+                : [];
+        return Array.from(new Set([...classes]));
     }
 
     attributes() {
@@ -94,7 +103,6 @@ export class Bind {
 
     all() {
         return {
-            class: this.classes(),
             style: this.styles(),
             ...this.attributes(),
             ...this.listeners()

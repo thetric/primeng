@@ -753,7 +753,7 @@ export class DomHandler {
 
                     if (matchedEvent) {
                         element.addEventListener(matchedEvent[1].toLowerCase(), value);
-                    } else if (key === 'p-bind') {
+                    } else if (key === 'pBind') {
                         this.setAttributes(element, value);
                     } else {
                         value = key === 'class' ? [...new Set(computedStyles('class', value))].join(' ').trim() : key === 'style' ? computedStyles('style', value).join(';').trim() : value;

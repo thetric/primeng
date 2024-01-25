@@ -6,22 +6,24 @@ import { ObjectUtils } from 'primeng/utils';
 export class BaseComponent {
     @Input() unstyled: boolean = false;
 
-    @Input() pt: { [arg: string]: any } | undefined | null;
+    _pt: { [arg: string]: any } | undefined | null;
+
+    @Input() get pt(): { [arg: string]: any } | undefined | null {
+        return this._pt;
+    }
+
+    set pt(value: { [arg: string]: any } | undefined | null) {
+        this._pt = value;
+    }
 
     @Input() ptOptions: { [arg: string]: any } | undefined | null;
 
     parentEl: ElementRef | undefined;
 
-    constructor(public el: ElementRef, public vc: ViewContainerRef) {}
-
-    ngOnChanges(changes: SimpleChanges) {
-        if (changes && changes.pt && changes.pt.currentValue) {
-            this.pt = changes.pt.currentValue;
-        }
-    }
+    constructor(public el: ElementRef) {}
 
     ptm(key = '', params = {}) {
-        return this._getPTValue(this.pt, key, { instance: this, ...params }, false);
+        return this._getPTValue(this.pt, key, { ...this._params(), ...params }, false);
     }
 
     _getPTValue(obj = {}, key = '', params = {}, searchInDefaultPT = true) {
@@ -83,7 +85,7 @@ export class BaseComponent {
         const [options, key = '', params = {}] = args;
         const fKeys = ObjectUtils.toFlatCase(key).split('.');
         const fKey = fKeys.shift();
-        // console.log('optval', options, key, params);
+
         return fKey
             ? ObjectUtils.isObject(options)
                 ? this._getOptionValue(ObjectUtils.getItemValue(options[Object.keys(options).find((k) => ObjectUtils.toFlatCase(k) === fKey) || ''], params), fKeys.join('.'), params)
@@ -99,13 +101,14 @@ export class BaseComponent {
         return this;
     }
 
-    params() {
+    _params() {
         const instance = this._getHostInstance(this);
+
         // TODO: add props etc.
         return {
             instance: instance,
-            //@ts-ignore
-            props: instance?.props
+            props: instance['params']['props'],
+            state: instance['params']['state']
         };
     }
 
@@ -114,10 +117,10 @@ export class BaseComponent {
     }
 
     cx(key = '', params = {}) {
-        // @ts-ignore
-        const classes = this.classes;
+        const classes = this['classes'];
+
         if (!this.unstyled) {
-            return this._getOptionValue(classes, key, { ...this.params(), ...params });
+            return this._getOptionValue(classes, key, { ...this._params(), ...params });
         } else {
             return undefined;
         }
