@@ -6,11 +6,6 @@ import css from './style/panelstyle';
 
 import { Directive, ElementRef, EventEmitter, Input, Output, SimpleChanges, effect, signal, computed } from '@angular/core';
 import { PanelBeforeToggleEvent, PanelAfterToggleEvent } from './panel.interface';
-import { Nullable } from 'primeng/ts-helpers';
-export interface Props {
-    [klass: string]: any;
-    state: { [klass: string]: any };
-}
 
 @Directive({ standalone: true })
 export class BasePanel extends BaseComponent {
@@ -28,7 +23,6 @@ export class BasePanel extends BaseComponent {
      * Defines the initial state of panel content, supports one or two-way binding as well.
      * @group Props
      */
-    // @Input() collapsed: boolean | undefined;
     _collapsed = signal<boolean>(false);
     @Input() set collapsed(value: boolean | undefined) {
         if (this._collapsed() !== value) {
@@ -99,81 +93,27 @@ export class BasePanel extends BaseComponent {
 
     animating = signal<boolean>(false);
 
-    params: any = {
-        props: {},
-        state: {}
-    };
-
-    // props = computed<Props>(() => {
-    //     return {
-    //         inputs: {
-    //             toggler: this.toggler,
-    //             style: this.style,
-    //             styleClass: this.styleClass,
-    //             iconPos: this.iconPos,
-    //             expandIcon: this.expandIcon,
-    //             collapseIcon: this.collapseIcon,
-    //             showHeader: this.showHeader,
-    //             transitionOptions: this.transitionOptions,
-    //             header: this.header,
-    //             toggleable: this.toggleable,
-    //             collapsed: this._collapsed()
-    //         },
-    //         outputs: {
-    //             collapsedChange: this.collapsedChange,
-    //             onBeforeToggle: this.onBeforeToggle,
-    //             onAfterToggle: this.onAfterToggle
-    //         },
-    //         state: {
-    //             animating: this.animating()
-    //         }
-    //     };
-    // });
-
-    constructor(public el: ElementRef) {
-        super(el);
-
-        effect(() => {
-            this.updateProps();
-        });
-    }
-
-    ngOnInit() {
-        this.updateProps();
-    }
-
-    ngOnChanges(changes: SimpleChanges) {
-        if (changes) {
-            Object.keys(changes).forEach((key) => {
-                if (key !== 'pt') {
-                    this.params['props'][key] = changes[key].currentValue;
-                }
-            });
-        }
-
-        // console.log('changes from the basepanel');
-    }
-
-    updateProps() {
-        this.params['props'] = {
-            toggler: this.toggler,
-            style: this.style,
-            styleClass: this.styleClass,
-            iconPos: this.iconPos,
-            expandIcon: this.expandIcon,
-            collapseIcon: this.collapseIcon,
-            showHeader: this.showHeader,
-            transitionOptions: this.transitionOptions,
-            header: this.header,
-            toggleable: this.toggleable,
-            collapsed: this._collapsed(),
-            collapsedChange: this.collapsedChange,
-            onBeforeToggle: this.onBeforeToggle,
-            onAfterToggle: this.onAfterToggle
-        };
-
-        this.params['state'] = {
-            animating: this.animating
+    initParams() {
+        return {
+            props: {
+                toggler: this.toggler,
+                style: this.style,
+                styleClass: this.styleClass,
+                iconPos: this.iconPos,
+                expandIcon: this.expandIcon,
+                collapseIcon: this.collapseIcon,
+                showHeader: this.showHeader,
+                transitionOptions: this.transitionOptions,
+                header: this.header,
+                toggleable: this.toggleable,
+                collapsed: this._collapsed(),
+                collapsedChange: this.collapsedChange,
+                onBeforeToggle: this.onBeforeToggle,
+                onAfterToggle: this.onAfterToggle
+            },
+            state: {
+                animating: this.animating
+            }
         };
     }
 
@@ -226,56 +166,3 @@ export class BasePanel extends BaseComponent {
     }
 }`;
 }
-
-// const css = `
-// @layer primeng {
-//     .p-panel-header {
-//         background-color:red;
-//         display: flex;
-//         align-items: center;
-//     }
-
-//     .p-panel-title {
-//         line-height: 1;
-//         order: 1;
-//     }
-
-//     .p-panel-header-icon {
-//         display: inline-flex;
-//         justify-content: center;
-//         align-items: center;
-//         cursor: pointer;
-//         text-decoration: none;
-//         overflow: hidden;
-//         position: relative;
-//     }
-
-//     .p-panel-toggleable.p-panel-expanded > .p-toggleable-content:not(.ng-animating) {
-//         overflow: visible;
-//     }
-
-//     .p-panel-toggleable .p-toggleable-content {
-//         overflow: hidden;
-//     }
-// }`;
-
-// const classes = {
-//     root: ({ props }) => ({
-//         'p-panel p-component': true,
-//         'p-panel-toggleable': props.toggleable,
-//         'p-panel-expanded': !props.collapsed && props.toggleable
-//     }),
-//     header: 'p-panel-header',
-//     title: 'p-panel-title',
-//     icon: 'p-panel-icons',
-//     toggler: 'p-panel-header-icon p-panel-toggler p-link',
-//     toggleablecontent: 'p-toggleable-content',
-//     content: 'p-panel-content',
-//     footer: 'p-panel-footer'
-// };
-
-// const pt = {
-//     panel: {
-//         root: ({ props, instance, state }) => (props.toggleable ? 'hello world' : 'noooo')
-//     }
-// };

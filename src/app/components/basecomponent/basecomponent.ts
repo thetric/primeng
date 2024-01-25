@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Input, ElementRef, Injectable, Component, ContentChild, ChangeDetectionStrategy, ViewEncapsulation, ViewContainerRef, ComponentRef, Directive, SimpleChanges } from '@angular/core';
+import { Input, ElementRef, Injectable, Component, ContentChild, ChangeDetectionStrategy, ViewEncapsulation, ViewContainerRef, ComponentRef, Directive, SimpleChanges, effect } from '@angular/core';
 import { ObjectUtils } from 'primeng/utils';
 
 @Directive({ standalone: true })
@@ -20,7 +20,32 @@ export class BaseComponent {
 
     parentEl: ElementRef | undefined;
 
-    constructor(public el: ElementRef) {}
+    params: any = {
+        props: {},
+        state: {}
+    };
+
+    constructor(public el: ElementRef) {
+        effect(() => {
+            this.params = this.initParams();
+        });
+    }
+
+    ngOnInit() {
+        this.params = this.initParams();
+    }
+
+    ngOnChanges(changes: SimpleChanges) {
+        if (changes) {
+            Object.keys(changes).forEach((key) => {
+                if (key !== 'pt') {
+                    this.params['props'][key] = changes[key].currentValue;
+                }
+            });
+        }
+    }
+
+    initParams() {}
 
     ptm(key = '', params = {}) {
         return this._getPTValue(this.pt, key, { ...this._params(), ...params }, false);
