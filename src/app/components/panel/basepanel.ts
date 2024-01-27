@@ -127,7 +127,12 @@ export class BasePanel extends BaseComponent {
         },
         header: 'p-panel-header',
         title: 'p-panel-title',
-        icon: 'p-panel-icons',
+        icon: ({ props }) => ({
+            'p-panel-icons': true,
+            'p-panel-icons-start': props.iconPos === 'start',
+            'p-panel-icons-end': props.iconPos === 'end',
+            'p-panel-icons-center': props.iconPos === 'center'
+        }),
         toggler: 'p-panel-header-icon p-panel-toggler p-link',
         toggleablecontent: 'p-toggleable-content',
         content: 'p-panel-content',

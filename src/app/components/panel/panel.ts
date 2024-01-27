@@ -19,11 +19,11 @@ import { Bind } from 'primeng/bind';
     selector: 'p-panel',
     template: `
         <div [attr.id]="id" [pBind]="ptm('root')" [ngClass]="cx('root')" [ngStyle]="style" [class]="styleClass">
-            <div [ngClass]="cx('header')" *ngIf="showHeader" (click)="onHeaderClick($event)" [attr.id]="id + '-titlebar'">
-                <span class="p-panel-title" *ngIf="header" [attr.id]="id + '_header'">{{ header }}</span>
+            <div [ngClass]="cx('header')" [pBind]="ptm('header')" *ngIf="showHeader" (click)="onHeaderClick($event)" [attr.id]="id + '-titlebar'">
+                <span [ngClass]="cx('title')" [pBind]="ptm('title')" *ngIf="header" [attr.id]="id + '_header'">{{ header }}</span>
                 <ng-content select="p-header"></ng-content>
                 <ng-container *ngTemplateOutlet="headerTemplate"></ng-container>
-                <div class="p-panel-icons" [ngClass]="{ 'p-panel-icons-start': iconPos === 'start', 'p-panel-icons-end': iconPos === 'end', 'p-panel-icons-center': iconPos === 'center' }">
+                <div [ngClass]="cx('icon')" [pBind]="ptm('icon')">
                     <ng-template *ngTemplateOutlet="iconTemplate"></ng-template>
                     <button
                         *ngIf="toggleable"
@@ -31,7 +31,8 @@ import { Bind } from 'primeng/bind';
                         pRipple
                         type="button"
                         role="button"
-                        class="p-panel-header-icon p-panel-toggler p-link"
+                        [ngClass]="cx('toggler')"
+                        [pBind]="ptm('toggler')"
                         [attr.aria-label]="buttonAriaLabel"
                         [attr.aria-controls]="id + '_content'"
                         [attr.aria-expanded]="!_collapsed()"
@@ -55,7 +56,8 @@ import { Bind } from 'primeng/bind';
                 </div>
             </div>
             <div
-                class="p-toggleable-content"
+                [ngClass]="cx('toggleablecontent')"
+                [pBind]="ptm('toggleablecontent')"
                 [id]="id + '_content'"
                 role="region"
                 [attr.aria-labelledby]="id + '_header'"
@@ -68,12 +70,12 @@ import { Bind } from 'primeng/bind';
                 "
                 (@panelContent.done)="onToggleDone($event)"
             >
-                <div class="p-panel-content">
+                <div [ngClass]="cx('content')" [pBind]="ptm('content')">
                     <ng-content></ng-content>
                     <ng-container *ngTemplateOutlet="contentTemplate"></ng-container>
                 </div>
 
-                <div class="p-panel-footer" *ngIf="footerFacet || footerTemplate">
+                <div [ngClass]="cx('footer')" [pBind]="ptm('footer')" *ngIf="footerFacet || footerTemplate">
                     <ng-content select="p-footer"></ng-content>
                     <ng-container *ngTemplateOutlet="footerTemplate"></ng-container>
                 </div>

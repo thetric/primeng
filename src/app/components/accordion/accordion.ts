@@ -26,6 +26,9 @@ import { ChevronRightIcon } from 'primeng/icons/chevronright';
 import { Subscription } from 'rxjs';
 import { AccordionTabCloseEvent, AccordionTabOpenEvent } from './accordion.interface';
 import { UniqueComponentId } from 'primeng/utils';
+import { Bind } from 'primeng/bind';
+import { BaseAccordionTab } from './baseaccordiontab';
+import { BaseAccordion } from './baseaccordion';
 
 /**
  * AccordionTab is a helper component for Accordion.
@@ -113,7 +116,7 @@ import { UniqueComponentId } from 'primeng/utils';
         class: 'p-element'
     }
 })
-export class AccordionTab implements AfterContentInit, OnDestroy {
+export class AccordionTab extends BaseAccordionTab implements AfterContentInit, OnDestroy {
     /**
      * Current id state as a string.
      * @group Props
@@ -344,7 +347,7 @@ export class AccordionTab implements AfterContentInit, OnDestroy {
         class: 'p-element'
     }
 })
-export class Accordion implements BlockableUI, AfterContentInit, OnDestroy {
+export class Accordion extends BaseAccordion implements BlockableUI, AfterContentInit, OnDestroy {
     /**
      * When enabled, multiple tabs can be activated at the same time.
      * @group Props
@@ -434,8 +437,6 @@ export class Accordion implements BlockableUI, AfterContentInit, OnDestroy {
     preventActiveIndexPropagation: boolean = false;
 
     public tabs: AccordionTab[] = [];
-
-    constructor(public el: ElementRef, public changeDetector: ChangeDetectorRef) {}
 
     @HostListener('keydown', ['$event'])
     onKeydown(event) {
@@ -635,7 +636,7 @@ export class Accordion implements BlockableUI, AfterContentInit, OnDestroy {
 }
 
 @NgModule({
-    imports: [CommonModule, ChevronRightIcon, ChevronDownIcon],
+    imports: [CommonModule, ChevronRightIcon, ChevronDownIcon, Bind],
     exports: [Accordion, AccordionTab, SharedModule],
     declarations: [Accordion, AccordionTab]
 })
