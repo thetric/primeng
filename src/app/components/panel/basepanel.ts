@@ -1,10 +1,5 @@
-import { CommonModule } from '@angular/common';
+import { Directive, EventEmitter, Input, Output, signal } from '@angular/core';
 import { BaseComponent } from 'primeng/basecomponent';
-import name from './style/panelstyle';
-import classes from './style/panelstyle';
-import css from './style/panelstyle';
-
-import { Directive, ElementRef, EventEmitter, Input, Output, SimpleChanges, effect, signal, computed } from '@angular/core';
 import { PanelBeforeToggleEvent, PanelAfterToggleEvent } from './panel.interface';
 
 @Directive({ standalone: true })
