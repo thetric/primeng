@@ -14,7 +14,7 @@ import { Code } from '../../domain/code';
                     consequat.
                 </p>
             </p-sidebar>
-            <p-button (click)="sidebarVisible = true" icon="pi pi-arrow-right"></p-button>
+            <p-button (click)="sidebarVisible = true" icon="pi pi-arrow-right" />
         </div>
         <app-code [code]="code" selector="sidebar-size-demo"></app-code>
     `
@@ -29,7 +29,7 @@ export class SizeDoc {
         Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
     </p>
 </p-sidebar>
-<p-button (click)="sidebarVisible = true" icon="pi pi-arrow-right"></p-button>`,
+<p-button (click)="sidebarVisible = true" icon="pi pi-arrow-right"/>`,
 
         html: `
 <div class="card flex justify-content-center">
@@ -39,7 +39,7 @@ export class SizeDoc {
             Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
         </p>
     </p-sidebar>
-    <p-button (click)="sidebarVisible = true" icon="pi pi-arrow-right"></p-button>
+    <p-button (click)="sidebarVisible = true" icon="pi pi-arrow-right"/>
 </div>`,
 
         typescript: `

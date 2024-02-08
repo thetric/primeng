@@ -26,3 +26,8 @@ export interface SidebarTemplates {
      */
     headless(): TemplateRef<any>;
 }
+/**
+ * Defines valid valus for sidebar position.
+ * @group Interface
+ */
+export type SidebarPosition = 'left' | 'right' | 'bottom' | 'top';
