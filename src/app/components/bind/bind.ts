@@ -1,5 +1,4 @@
-import { CommonModule } from '@angular/common';
-import { Input, Directive, NgModule, ElementRef, Renderer2, SimpleChanges, HostBinding, Component, ChangeDetectionStrategy } from '@angular/core';
+import { Input, Directive, ElementRef, Renderer2, SimpleChanges } from '@angular/core';
 import { ObjectUtils } from 'primeng/utils';
 import { DomHandler } from 'primeng/dom';
 
@@ -18,6 +17,7 @@ export class Bind {
 
     ngOnInit() {
         this.bind();
+        console.log(this.attrs);
     }
 
     ngOnChanges(changes: SimpleChanges) {
@@ -29,7 +29,9 @@ export class Bind {
 
     bind() {
         DomHandler.setAttributes(this.host, this.all());
-        this.renderer.setAttribute(this.host, 'class', this.classes().join(' '));
+        // this.renderer.setAttribute(this.host, 'class', this.classes().join(' '));
+        // TODO: refactor this line
+        this.host.classList.add(...this.classes());
     }
 
     classes() {
