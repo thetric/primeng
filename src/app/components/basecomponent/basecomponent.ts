@@ -1,9 +1,33 @@
-import { CommonModule } from '@angular/common';
-import { Input, ElementRef, Injectable, Component, ContentChild, ChangeDetectionStrategy, ViewEncapsulation, ViewContainerRef, ComponentRef, Directive, SimpleChanges, effect } from '@angular/core';
-import { ObjectUtils } from 'primeng/utils';
+import { DOCUMENT } from '@angular/common';
+import { Input, ElementRef, Directive, SimpleChanges, effect, inject, ChangeDetectorRef, Renderer2, PLATFORM_ID, NgZone } from '@angular/core';
+import { ObjectUtils, UniqueComponentId } from 'primeng/utils';
+import { PrimeNGConfig } from '../api/primengconfig';
+import { platformBrowser } from '@angular/platform-browser';
 
 @Directive({ standalone: true })
 export class BaseComponent {
+    public el: ElementRef = inject(ElementRef);
+
+    public renderer: Renderer2 = inject(Renderer2);
+
+    public cd: ChangeDetectorRef = inject(ChangeDetectorRef);
+
+    public config: PrimeNGConfig = inject(PrimeNGConfig);
+
+    public document: Document = inject(DOCUMENT);
+
+    public platformId: any = inject(PLATFORM_ID);
+
+    public componentId: string = UniqueComponentId();
+
+    public zone: NgZone = inject(NgZone);
+
+    public isPlatformBrowser() {
+        return platformBrowser(this.platformId);
+    }
+
+    public parentEl: ElementRef | undefined;
+
     @Input() unstyled: boolean = false;
 
     _pt: { [arg: string]: any } | undefined | null;
@@ -18,14 +42,12 @@ export class BaseComponent {
 
     @Input() ptOptions: { [arg: string]: any } | undefined | null;
 
-    parentEl: ElementRef | undefined;
-
     params: any = {
         props: {},
         state: {}
     };
 
-    constructor(public el: ElementRef) {
+    constructor() {
         effect(() => {
             this.params = this.initParams();
         });
