@@ -1,4 +1,4 @@
-import { Directive, EventEmitter, Input, Output, signal } from '@angular/core';
+import { Directive, EventEmitter, Input, Output, effect, signal } from '@angular/core';
 import { BaseComponent } from 'primeng/basecomponent';
 import { PanelBeforeToggleEvent, PanelAfterToggleEvent } from './panel.interface';
 
@@ -24,6 +24,12 @@ export class BasePanel extends BaseComponent {
             this._collapsed.set(value);
         }
     }
+    get collapsed() {
+        return this._collapsed();
+    }
+    collapsedEffect = effect(() => {
+        this.collapsedChange.emit(this._collapsed());
+    });
     /**
      * Inline style of the component.
      * @group Props
