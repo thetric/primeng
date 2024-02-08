@@ -17,7 +17,6 @@ export class Bind {
 
     ngOnInit() {
         this.bind();
-        console.log(this.attrs);
     }
 
     ngOnChanges(changes: SimpleChanges) {
