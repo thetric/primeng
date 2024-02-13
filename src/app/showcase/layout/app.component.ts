@@ -39,8 +39,14 @@ export class AppComponent implements OnInit {
 
             this.bindRouteEvents();
         });
-    }
 
+        // TODO: Global pt configuration, will be removed later.
+        this.primeng.pt = {
+            panel: {
+                root: 'HELLO WORLD'
+            }
+        };
+    }
     ngOnInit(): void {
         this.primeng.ripple = true;
         if (isPlatformBrowser(this.platformId)) {

@@ -1,5 +1,5 @@
 import { DOCUMENT } from '@angular/common';
-import { Input, ElementRef, Directive, SimpleChanges, effect, inject, ChangeDetectorRef, Renderer2, PLATFORM_ID, NgZone } from '@angular/core';
+import { Input, ElementRef, Directive, SimpleChanges, effect, inject, ChangeDetectorRef, Renderer2, PLATFORM_ID, NgZone, computed } from '@angular/core';
 import { ObjectUtils, UniqueComponentId } from 'primeng/utils';
 import { PrimeNGConfig } from '../api/primengconfig';
 import { platformBrowser } from '@angular/platform-browser';
@@ -28,6 +28,8 @@ export class BaseComponent {
 
     public parentEl: ElementRef | undefined;
 
+    @Input() ptOptions: { [arg: string]: any } | undefined | null;
+
     @Input() unstyled: boolean = false;
 
     _pt: { [arg: string]: any } | undefined | null;
@@ -39,8 +41,6 @@ export class BaseComponent {
     set pt(value: { [arg: string]: any } | undefined | null) {
         this._pt = value;
     }
-
-    @Input() ptOptions: { [arg: string]: any } | undefined | null;
 
     params: any = {
         props: {},
@@ -67,24 +67,38 @@ export class BaseComponent {
         }
     }
 
+    // to avoid typescript error
     initParams() {}
 
     ptm(key = '', params = {}) {
-        return this._getPTValue(this.pt, key, { ...this._params(), ...params }, false);
+        return this._getPTValue(this.pt, key, { ...this._params(), ...params });
     }
 
-    _getPTValue(obj = {}, key = '', params = {}, searchInDefaultPT = true) {
+    _getPTDatasets(key = '') {
         const datasetPrefix = 'data-pc-';
-        const searchOut = /./g.test(key) && !!params[key.split('.')[0]];
-        const mergeSections = true;
-        const mergeProps = true;
+        const isExtended = key === 'root' && ObjectUtils.isNotEmpty(this.pt?.['data-pc-section']);
 
-        const self = searchOut ? undefined : this._usePT(this._getPT(obj, this.name), this._getPTClassValue.bind(this), key, { ...params, global: {} });
-        const datasets = {
-            ...(key === 'root' && { [`${datasetPrefix}name`]: ObjectUtils.toFlatCase(this.name) }),
-            [`${datasetPrefix}section`]: ObjectUtils.toFlatCase(key)
-        };
-        return { ...self, ...datasets };
+        return (
+            key !== 'transition' && {
+                ...(key === 'root' && {
+                    [`${datasetPrefix}name`]: ObjectUtils.toFlatCase(isExtended ? this.pt?.['data-pc-section'] : this.name),
+                    ...(isExtended && { [`${datasetPrefix}extend`]: ObjectUtils.toFlatCase(this.name) })
+                }),
+                [`${datasetPrefix}section`]: ObjectUtils.toFlatCase(key)
+            }
+        );
+    }
+
+    defaultPT() {
+        return this._getPT(this.config?.pt, undefined, (value) => this._getOptionValue(value, this.name, { ...this.params }) || ObjectUtils.getItemValue(value, { ...this.params }));
+    }
+
+    _mergeProps(fn, ...args) {
+        return ObjectUtils.isFunction(fn) ? fn(...args) : ObjectUtils.mergeProps(...args);
+    }
+
+    _useDefaultPT(callback, key, params) {
+        return this._usePT(this.defaultPT(), callback, key, params);
     }
 
     _getPT(pt, key = '', callback?) {
@@ -109,7 +123,7 @@ export class BaseComponent {
         const fn = (value: any) => callback(value, key, params);
 
         if (pt?.hasOwnProperty('_usept')) {
-            const { mergeSections = true, mergeProps: useMergeProps = false } = pt['_usept'] || {};
+            const { mergeSections = true, mergeProps: useMergeProps = false } = pt['_usept'] || this.config?.ptOptions || {};
             const originalValue = fn(pt.originalValue);
             const value = fn(pt.value);
 
@@ -121,6 +135,28 @@ export class BaseComponent {
         }
 
         return fn(pt);
+    }
+
+    _getPTValue(obj = {}, key = '', params = {}, searchInDefaultPT = true) {
+        const datasetPrefix = 'data-pc-';
+        const searchOut = /./g.test(key) && !!params[key.split('.')[0]];
+        const { mergeSections = true, mergeProps: useMergeProps = false } = this._getPropValue('ptOptions') || this.config?.ptOptions || {};
+        const global = searchInDefaultPT ? (searchOut ? this._useGlobalPT(this._getPTClassValue.bind(this), key, params) : this._useDefaultPT(this._getPTClassValue.bind(this), key, params)) : undefined;
+        const self = searchOut ? undefined : this._usePT(this._getPT(obj, this.name), this._getPTClassValue.bind(this), key, { ...params, global: {} });
+        // const datasets = {
+        //     ...(key === 'root' && { [`${datasetPrefix}name`]: ObjectUtils.toFlatCase(this.name) }),
+        //     [`${datasetPrefix}section`]: ObjectUtils.toFlatCase(key)
+        // };
+        const datasets = this._getPTDatasets(key);
+        return mergeSections || (!mergeSections && self) ? (useMergeProps ? this._mergeProps(useMergeProps, global, self, datasets) : { ...global, ...self, ...datasets }) : { ...self, ...datasets };
+    }
+
+    globalPT() {
+        return this._getPT(this.config?.pt, undefined, (value) => ObjectUtils.getItemValue(value, { instance: this }));
+    }
+
+    _useGlobalPT(callback, key, params) {
+        return this._usePT(this.globalPT.bind(this), callback, key, params);
     }
 
     _getPTClassValue(...args: any[]) {
@@ -172,6 +208,17 @@ export class BaseComponent {
             return undefined;
         }
     }
+
+    // sx(key = '', when = true, params = {}) {
+    //     if (when) {
+    //         const self = this._getOptionValue(this.$style.inlineStyles, key, { ...this.params, ...params });
+    //         const base = this._getOptionValue(BaseComponentStyle.inlineStyles, key, { ...this.params, ...params });
+
+    //         return [base, self];
+    //     }
+
+    //     return undefined;
+    // }
 
     isUnstyled() {
         return this.unstyled;

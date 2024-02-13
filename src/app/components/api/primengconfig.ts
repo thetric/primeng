@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, effect, signal } from '@angular/core';
 import { Subject } from 'rxjs';
 import { FilterMatchMode } from './filtermatchmode';
 import { OverlayOptions } from './overlayoptions';
@@ -140,26 +140,9 @@ export class PrimeNGConfig {
         }
     };
 
-    // public pt = {
-    //     panel: {
-    //         root: 'cetin'
-    //     },
-    //     accordion: {
-    //         accordionTab:{
-    //             root: 'cetin'
-    //         }
-    //     },
-    //     accordionTab: {}
-    // };
+    public pt: { [arg: string]: any } | undefined | null;
 
-    // public ptOptions: {
-    //     mergeSections: true;
-    //     mergeProps: false;
-    // };
-
-    public pt: any;
-
-    public ptOptions: any;
+    public ptOptions: { [arg: string]: any } | undefined | null;
 
     unstyled: false;
 

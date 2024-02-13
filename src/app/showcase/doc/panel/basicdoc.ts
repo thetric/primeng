@@ -1,5 +1,6 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { Code } from '../../domain/code';
+import { PrimeNGConfig } from 'primeng/api';
 
 @Component({
     selector: 'basic-doc',
@@ -8,6 +9,7 @@ import { Code } from '../../domain/code';
             <p>A simple Panel is created with a <i>header</i> property along with the content as children.</p>
         </app-docsectiontext>
         <div class="card flex justify-content-center">
+            <button (click)="updatePT()">yoo</button>
             <p-panel header="Header" [toggleable]="true">
                 <p>
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
@@ -33,8 +35,16 @@ export class BasicDoc {
             }
         };
     }
+    updatePT() {
+        // this.primeng._pt.set('panelden setlendi');
+    }
 
-    constructor(public cd: ChangeDetectorRef) {}
+    public primeng = inject(PrimeNGConfig);
+
+    constructor(public cd: ChangeDetectorRef) {
+        // this.primeng.pt.update((pt) => ({ ...pt, panel: { ...pt.panel, header: 'hello world' } }));
+    }
+
     code: Code = {
         basic: `<p-panel header="Header">
     <p>
