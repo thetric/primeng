@@ -141,8 +141,12 @@ export class PrimeNGConfig {
     };
 
     public pt: { [arg: string]: any } | undefined | null;
+    // bilesenlerin icinde veya tepe component disinda bir yerde update edilebilecek, degistirilebilecek.
+    // pt ve ptOptions update edilebilir olmali, signal veya observable olarak bak.
 
     public ptOptions: { [arg: string]: any } | undefined | null;
+    // ptOptions = {mergeSections: boolean, mergeProps: boolean}
+    //
 
     unstyled: false;
 
