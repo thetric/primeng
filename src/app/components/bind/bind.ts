@@ -4,7 +4,10 @@ import { DomHandler } from 'primeng/dom';
 
 @Directive({
     selector: '[pBind]',
-    standalone: true
+    standalone: true,
+    host: {
+        '[class]': 'classes().join(" ")'
+    }
 })
 export class Bind {
     @Input('pBind') attrs: { [key: string]: any };
@@ -15,9 +18,9 @@ export class Bind {
         this.host = this.el.nativeElement;
     }
 
-    ngOnInit() {
-        this.bind();
-    }
+    // ngOnInit() {
+    //     this.bind();
+    // }
 
     ngOnChanges(changes: SimpleChanges) {
         if (changes.attrs.currentValue && ObjectUtils.equals(changes.attrs.currentValue, changes.attrs.previousValue) === false) {
@@ -28,18 +31,15 @@ export class Bind {
 
     bind() {
         DomHandler.setAttributes(this.host, this.all());
-        // this.renderer.setAttribute(this.host, 'class', this.classes().join(' '));
-        // TODO: refactor this line
-        this.host.classList.add(...this.classes());
     }
 
     classes() {
         const classes =
             typeof this.attrs.class === 'string'
                 ? this.attrs.class.split(' ')
-                : Array.isArray(this.attrs.class)
+                : ObjectUtils.isArray(this.attrs.class)
                 ? this.attrs.class
-                : typeof this.attrs.class === 'object'
+                : ObjectUtils.isObject(this.attrs.class)
                 ? Object.keys(this.attrs.class).filter((key) => this.attrs.class[key] === true)
                 : [];
         return Array.from(new Set([...classes]));
