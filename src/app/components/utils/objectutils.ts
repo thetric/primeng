@@ -291,26 +291,13 @@ export class ObjectUtils {
         if (props) {
             const isFn = (o) => !!(o && o.constructor && o.call && o.apply);
 
-            const a = props.reduce((merged, ps) => {
+            const mergedProps = props.reduce((merged, ps) => {
                 for (const key in ps) {
                     const value = ps[key];
-
-                    if (key === 'style') {
-                        merged['style'] = { ...merged['style'], ...ps['style'] };
-                    } else if (key === 'class') {
-                        let newClass = [merged['class'], ps['class']].join(' ').trim();
-                        const isEmpty = newClass === null || newClass === undefined || newClass === '';
-
-                        merged['class'] = isEmpty ? undefined : newClass;
-                    } else if (isFn(value)) {
-                        const fn = merged[key];
-
-                        merged[key] = fn
-                            ? (...args) => {
-                                  fn(...args);
-                                  value(...args);
-                              }
-                            : value;
+                    if (key === 'class') {
+                        merged['class'] = [...(merged['class'] || ''), ...(typeof value === 'string' ? [value] : Object.keys(value).filter((k) => value[k]))];
+                    } else if (!merged[key] && isFn(value)) {
+                        merged[key] = value;
                     } else {
                         merged[key] = value;
                     }
@@ -319,7 +306,7 @@ export class ObjectUtils {
                 return merged;
             }, {});
 
-            return a;
+            return mergedProps;
         }
 
         return undefined;
