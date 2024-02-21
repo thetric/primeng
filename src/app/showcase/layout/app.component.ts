@@ -42,11 +42,60 @@ export class AppComponent implements OnInit {
 
         // TODO: Global pt configuration, will be removed later.
         this.primeng.pt = {
+            // global: {
+            //     css: `.FROMCONFIG{
+            //         color: red;
+            //     }`
+            //     // global css'ler
+            // },
             panel: {
-                root: 'HELLO WORLD'
+                root: {
+                    class: 'FROM CONFIG'
+                },
+                header: {
+                    class: 'FROMCONFIG'
+                },
+                hooks: {
+                    onInit: () => {
+                        // do something
+                        console.log('oninit');
+                    },
+                    afterViewInit: () => {
+                        // do something
+                        console.log('afterviewinit');
+                    }
+                }
+            },
+            splitButton: {
+                root: (params) => this.myMethod(params)
+            }
+        };
+
+        // this.primeng.ptOptions = {
+        //     mergeSections: true,
+        //     mergeProps: true
+        // };
+    }
+
+    myMethodPanel(params) {
+        const { props, state } = params;
+        return {
+            class: {
+                'p-CETIN': !props.collapsed,
+                'p-PRIME': props.collapsed
             }
         };
     }
+
+    myMethod(params) {
+        const { props, state } = params;
+        return {
+            class: {
+                'p-HELLO': state.isExpanded
+            }
+        };
+    }
+
     ngOnInit(): void {
         this.primeng.ripple = true;
         if (isPlatformBrowser(this.platformId)) {
