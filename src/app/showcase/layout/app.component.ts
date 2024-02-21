@@ -49,26 +49,54 @@ export class AppComponent implements OnInit {
             //     // global css'ler
             // },
             panel: {
-                root: {
-                    class: 'FROM CONFIG'
-                },
-                header: {
-                    class: 'FROMCONFIG'
-                },
+                // root: {
+                //     class: 'FROM CONFIG'
+                // },
+                // header: {
+                //     class: 'FROMCONFIG'
+                // },
                 hooks: {
+                    onChanges: () => {
+                        // do something
+                        // console.log('ONCHANGES from appcomponent');
+                    },
                     onInit: () => {
                         // do something
-                        console.log('oninit');
+                        // console.log('ONINIT from appcomponent');
+                    },
+                    afterContentChecked: () => {
+                        // do something
+                        // console.log('AFTERCONTENTCHECKED from appcomponent');
                     },
                     afterViewInit: () => {
                         // do something
-                        console.log('afterviewinit');
+                        // console.log('AFTERVIEWINIT from appcomponent');
+                    },
+                    afterViewChecked: () => {
+                        // do something
+                        // console.log('AFTERVIEWCHECKED from appcomponent');
+                    },
+                    afterRender: () => {
+                        // do something
+                        // console.log('AFTERRENDER from appcomponent');
+                    },
+                    afterNextRender: () => {
+                        // do something
+                        // console.log('AFTERNEXTRENDER from appcomponent');
+                    },
+                    afterContentInit: () => {
+                        // do something
+                        // console.log('AFTERCONTENTINIT from appcomponent');
+                    },
+                    onDestroy: () => {
+                        // do something
+                        // console.log('ONDESTROY from appcomponent');
                     }
                 }
-            },
-            splitButton: {
-                root: (params) => this.myMethod(params)
             }
+            // splitButton: {
+            //     root: (params) => this.myMethod(params)
+            // }
         };
 
         // this.primeng.ptOptions = {

@@ -1,5 +1,5 @@
 import { DOCUMENT } from '@angular/common';
-import { Input, ElementRef, Directive, SimpleChanges, effect, inject, ChangeDetectorRef, Renderer2, PLATFORM_ID, NgZone, computed, signal } from '@angular/core';
+import { Input, ElementRef, Directive, SimpleChanges, effect, inject, ChangeDetectorRef, Renderer2, PLATFORM_ID, NgZone, computed, signal, afterRender, afterNextRender } from '@angular/core';
 import { ObjectUtils, UniqueComponentId } from 'primeng/utils';
 import { PrimeNGConfig } from '../api/primengconfig';
 import { platformBrowser } from '@angular/platform-browser';
@@ -39,21 +39,39 @@ export class BaseComponent {
         state: {}
     };
 
-    constructor() {}
+    constructor() {
+        afterRender(() => {
+            this._hook('afterRender');
+        });
+        afterNextRender(() => {
+            this._hook('afterNextRender');
+        });
+    }
 
     ngOnInit() {
         this.params = this['initParams']();
+        this._hook('onInit');
     }
 
-    ngAfterViewInit() {}
+    ngAfterViewInit() {
+        this._hook('afterViewInit');
+    }
 
-    ngAfterContentInit() {}
+    ngAfterContentInit() {
+        this._hook('afterContentInit');
+    }
 
-    ngAfterViewChecked() {}
+    ngAfterViewChecked() {
+        this._hook('afterViewChecked');
+    }
 
-    ngAfterContentChecked() {}
+    ngAfterContentChecked() {
+        this._hook('afterContentChecked');
+    }
 
-    ngOnDestroy() {}
+    ngOnDestroy() {
+        this._hook('onDestroy');
+    }
 
     ngOnChanges(changes: SimpleChanges) {
         if (changes) {
@@ -65,6 +83,8 @@ export class BaseComponent {
                 }
             });
         }
+
+        this._hook('onChanges');
     }
 
     mergeClasses(...args) {
@@ -80,7 +100,12 @@ export class BaseComponent {
         return classNames.join(' ');
     }
 
-    _hook(hookName) {}
+    _hook(hookName) {
+        if (!this['hostName']) {
+            this._usePT(this._getPT(this.pt || this.config?.pt, this.name), this._getOptionValue.bind(this), `hooks.${hookName}`);
+            this._useDefaultPT(this._getOptionValue.bind(this), `hooks.${hookName}`);
+        }
+    }
 
     ptm(key = '', params = {}) {
         return this._getPTValue(this.pt, key, { ...this._params(), ...params });
@@ -109,7 +134,7 @@ export class BaseComponent {
         return ObjectUtils.isFunction(fn) ? fn(...args) : ObjectUtils.mergeProps(...args);
     }
 
-    _useDefaultPT(callback, key, params) {
+    _useDefaultPT(callback, key, params?) {
         return this._usePT(this.defaultPT(), callback, key, params);
     }
 
@@ -131,7 +156,7 @@ export class BaseComponent {
             : getValue(pt, true);
     }
 
-    _usePT(pt, callback, key, params) {
+    _usePT(pt, callback, key, params?) {
         const fn = (value: any) => callback(value, key, params);
         if (pt?.hasOwnProperty('_usept')) {
             const { mergeSections = true, mergeProps: useMergeProps = false } = pt['_usept'] || this.config?.ptOptions || this.ptOptions || {};
