@@ -53,23 +53,23 @@ import { Bind } from 'primeng/bind';
                         [pBind]="ptm('toggler')"
                         [attr.aria-label]="buttonAriaLabel"
                         [attr.aria-controls]="id + '_content'"
-                        [attr.aria-expanded]="!collapsed"
+                        [attr.aria-expanded]="!_collapsed()"
                         (click)="onIconClick($event)"
                         (keydown)="onKeyDown($event)"
                     >
                         <ng-container *ngIf="!headerIconTemplate">
-                            <ng-container *ngIf="!collapsed">
+                            <ng-container *ngIf="!_collapsed()">
                                 <span *ngIf="expandIcon" [class]="expandIcon" [ngClass]="iconClass"></span>
                                 <MinusIcon *ngIf="!expandIcon" [styleClass]="iconClass" />
                             </ng-container>
 
-                            <ng-container *ngIf="collapsed">
+                            <ng-container *ngIf="_collapsed()">
                                 <span *ngIf="collapseIcon" [class]="collapseIcon" [ngClass]="iconClass"></span>
                                 <PlusIcon *ngIf="!collapseIcon" [styleClass]="iconClass" />
                             </ng-container>
                         </ng-container>
 
-                        <ng-template *ngTemplateOutlet="headerIconTemplate; context: { $implicit: collapsed }"></ng-template>
+                        <ng-template *ngTemplateOutlet="headerIconTemplate; context: { $implicit: _collapsed() }"></ng-template>
                     </button>
                 </div>
             </div>

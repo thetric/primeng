@@ -29,6 +29,7 @@ export class BasePanel extends BaseComponent {
     }
     collapsedEffect = effect(() => {
         this.collapsedChange.emit(this._collapsed());
+        this.params = this.initParams();
     });
     /**
      * Inline style of the component.
@@ -113,7 +114,7 @@ export class BasePanel extends BaseComponent {
                 onAfterToggle: this.onAfterToggle
             },
             state: {
-                animating: this.animating
+                animating: this.animating()
             }
         };
     }
@@ -128,12 +129,14 @@ export class BasePanel extends BaseComponent {
         },
         header: 'p-panel-header',
         title: 'p-panel-title',
-        icon: ({ props }) => ({
-            'p-panel-icons': true,
-            'p-panel-icons-start': props.iconPos === 'start',
-            'p-panel-icons-end': props.iconPos === 'end',
-            'p-panel-icons-center': props.iconPos === 'center'
-        }),
+        icon: ({ props }) => {
+            return {
+                'p-panel-icons': true,
+                'p-panel-icons-start': props.iconPos === 'start',
+                'p-panel-icons-end': props.iconPos === 'end',
+                'p-panel-icons-center': props.iconPos === 'center'
+            };
+        },
         toggler: 'p-panel-header-icon p-panel-toggler p-link',
         toggleablecontent: 'p-toggleable-content',
         content: 'p-panel-content',
