@@ -1,5 +1,5 @@
 import { DOCUMENT } from '@angular/common';
-import { Input, ElementRef, Directive, SimpleChanges, effect, inject, ChangeDetectorRef, Renderer2, PLATFORM_ID, NgZone, computed } from '@angular/core';
+import { Input, ElementRef, Directive, SimpleChanges, effect, inject, ChangeDetectorRef, Renderer2, PLATFORM_ID, NgZone, computed, signal } from '@angular/core';
 import { ObjectUtils, UniqueComponentId } from 'primeng/utils';
 import { PrimeNGConfig } from '../api/primengconfig';
 import { platformBrowser } from '@angular/platform-browser';
@@ -32,43 +32,55 @@ export class BaseComponent {
 
     @Input() unstyled: boolean = false;
 
-    _pt: { [arg: string]: any } | undefined | null;
-
-    @Input() get pt(): { [arg: string]: any } | undefined | null {
-        return this._pt;
-    }
-
-    set pt(value: { [arg: string]: any } | undefined | null) {
-        this._pt = value;
-    }
+    @Input() pt: { [arg: string]: any } | undefined | null;
 
     params: any = {
         props: {},
         state: {}
     };
 
-    constructor() {
-        effect(() => {
-            this.params = this.initParams();
-        });
-    }
+    constructor() {}
 
     ngOnInit() {
-        this.params = this.initParams();
+        this.params = this['initParams']();
     }
+
+    ngAfterViewInit() {}
+
+    ngAfterContentInit() {}
+
+    ngAfterViewChecked() {}
+
+    ngAfterContentChecked() {}
+
+    ngOnDestroy() {}
 
     ngOnChanges(changes: SimpleChanges) {
         if (changes) {
             Object.keys(changes).forEach((key) => {
                 if (key !== 'pt') {
-                    this.params['props'][key] = changes[key].currentValue;
+                    if (this.params.props[key] !== changes[key].currentValue) {
+                        this.params.props[key] = changes[key].currentValue;
+                    }
                 }
             });
         }
     }
 
-    // to avoid typescript error
-    initParams() {}
+    mergeClasses(...args) {
+        const classNames = args.map((arg) => {
+            if (typeof arg === 'object') {
+                return Object.keys(arg)
+                    .filter((key) => arg[key])
+                    .join(' ');
+            } else {
+                return arg;
+            }
+        });
+        return classNames.join(' ');
+    }
+
+    _hook(hookName) {}
 
     ptm(key = '', params = {}) {
         return this._getPTValue(this.pt, key, { ...this._params(), ...params });
@@ -90,7 +102,7 @@ export class BaseComponent {
     }
 
     defaultPT() {
-        return this._getPT(this.config?.pt, undefined, (value) => this._getOptionValue(value, this.name, { ...this.params }) || ObjectUtils.getItemValue(value, { ...this.params }));
+        return this._getPT(this.config?.pt, undefined, (value) => this._getOptionValue(value, this.name, { ...this._params() }) || ObjectUtils.getItemValue(value, { ...this._params() }));
     }
 
     _mergeProps(fn, ...args) {
@@ -121,9 +133,8 @@ export class BaseComponent {
 
     _usePT(pt, callback, key, params) {
         const fn = (value: any) => callback(value, key, params);
-
         if (pt?.hasOwnProperty('_usept')) {
-            const { mergeSections = true, mergeProps: useMergeProps = false } = pt['_usept'] || this.config?.ptOptions || {};
+            const { mergeSections = true, mergeProps: useMergeProps = false } = pt['_usept'] || this.config?.ptOptions || this.ptOptions || {};
             const originalValue = fn(pt.originalValue);
             const value = fn(pt.value);
 
@@ -138,15 +149,10 @@ export class BaseComponent {
     }
 
     _getPTValue(obj = {}, key = '', params = {}, searchInDefaultPT = true) {
-        const datasetPrefix = 'data-pc-';
         const searchOut = /./g.test(key) && !!params[key.split('.')[0]];
-        const { mergeSections = true, mergeProps: useMergeProps = false } = this._getPropValue('ptOptions') || this.config?.ptOptions || {};
+        const { mergeSections = true, mergeProps: useMergeProps = false } = this._getPropValue('ptOptions') || this.config?.ptOptions || this.ptOptions || {};
         const global = searchInDefaultPT ? (searchOut ? this._useGlobalPT(this._getPTClassValue.bind(this), key, params) : this._useDefaultPT(this._getPTClassValue.bind(this), key, params)) : undefined;
         const self = searchOut ? undefined : this._usePT(this._getPT(obj, this.name), this._getPTClassValue.bind(this), key, { ...params, global: {} });
-        // const datasets = {
-        //     ...(key === 'root' && { [`${datasetPrefix}name`]: ObjectUtils.toFlatCase(this.name) }),
-        //     [`${datasetPrefix}section`]: ObjectUtils.toFlatCase(key)
-        // };
         const datasets = this._getPTDatasets(key);
         return mergeSections || (!mergeSections && self) ? (useMergeProps ? this._mergeProps(useMergeProps, global, self, datasets) : { ...global, ...self, ...datasets }) : { ...self, ...datasets };
     }
@@ -181,32 +187,38 @@ export class BaseComponent {
     }
 
     _getHostInstance(instance) {
-        return this;
+        if (instance) {
+            return instance ? (this['hostName'] ? (instance['name'] === this['hostName'] ? instance : this._getHostInstance(instance.parentInstance)) : instance.parentInstance) : undefined;
+        }
     }
 
     _params() {
-        const instance = this._getHostInstance(this);
+        const parentInstance = this._getHostInstance(this) || this.parent;
 
-        // TODO: add props etc.
         return {
-            instance: instance,
-            props: instance['params']['props'],
-            state: instance['params']['state']
+            instance: this,
+            props: this?.params['props'],
+            state: this?.params['state'],
+            parent: {
+                instance: parentInstance,
+                props: parentInstance?.params['props'],
+                state: parentInstance?.params['state']
+            }
         };
+    }
+
+    get parent() {
+        return this['parentInstance'];
     }
 
     get name() {
         return this.constructor.name.replace(/^_/, '').toLowerCase();
+        // return this._getHostInstance(this)?.constructor.name.replace(/^_/, '').toLowerCase();
     }
 
     cx(key = '', params = {}) {
-        const classes = this['classes'];
-
-        if (!this.unstyled) {
-            return this._getOptionValue(classes, key, { ...this._params(), ...params });
-        } else {
-            return undefined;
-        }
+        const classes = this.parent ? this.parent['classes'] : this['classes'];
+        return this.unstyled ? undefined : this._getOptionValue(classes, key, { ...this._params(), ...params });
     }
 
     // sx(key = '', when = true, params = {}) {
