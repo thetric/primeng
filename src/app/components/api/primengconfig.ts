@@ -150,6 +150,10 @@ export class PrimeNGConfig {
 
     unstyled: false;
 
+    csp: {
+        nonce: undefined;
+    };
+
     zIndex: any = {
         modal: 1100,
         overlay: 1000,

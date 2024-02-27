@@ -3,7 +3,7 @@ import { Input, ElementRef, Directive, SimpleChanges, effect, inject, ChangeDete
 import { ObjectUtils, UniqueComponentId } from 'primeng/utils';
 import { PrimeNGConfig } from '../api/primengconfig';
 import { platformBrowser } from '@angular/platform-browser';
-
+import { useStyle } from 'primeng/usestyle';
 @Directive({ standalone: true })
 export class BaseComponent {
     public el: ElementRef = inject(ElementRef);
@@ -41,36 +41,37 @@ export class BaseComponent {
 
     constructor() {
         afterRender(() => {
-            this._hook('afterRender');
+            // this._hook('afterRender');
         });
         afterNextRender(() => {
-            this._hook('afterNextRender');
+            // this._hook('afterNextRender');
         });
     }
 
     ngOnInit() {
+        this._loadGlobalStyles();
         this.params = this['initParams']();
-        this._hook('onInit');
+        // this._hook('onInit');
     }
 
     ngAfterViewInit() {
-        this._hook('afterViewInit');
+        // this._hook('afterViewInit');
     }
 
     ngAfterContentInit() {
-        this._hook('afterContentInit');
+        // this._hook('afterContentInit');
     }
 
     ngAfterViewChecked() {
-        this._hook('afterViewChecked');
+        // this._hook('afterViewChecked');
     }
 
     ngAfterContentChecked() {
-        this._hook('afterContentChecked');
+        // this._hook('afterContentChecked');
     }
 
     ngOnDestroy() {
-        this._hook('onDestroy');
+        // this._hook('onDestroy');
     }
 
     ngOnChanges(changes: SimpleChanges) {
@@ -84,7 +85,7 @@ export class BaseComponent {
             });
         }
 
-        this._hook('onChanges');
+        // this._hook('onChanges');
     }
 
     mergeClasses(...args) {
@@ -146,7 +147,6 @@ export class BaseComponent {
 
             return (checkSameKey ? (_key !== _cKey ? computedValue?.[_key] : undefined) : computedValue?.[_key]) ?? computedValue;
         };
-
         return pt?.hasOwnProperty('_usept')
             ? {
                   _usept: pt['_usept'],
@@ -182,12 +182,18 @@ export class BaseComponent {
         return mergeSections || (!mergeSections && self) ? (useMergeProps ? this._mergeProps(useMergeProps, global, self, datasets) : { ...global, ...self, ...datasets }) : { ...self, ...datasets };
     }
 
-    globalPT() {
-        return this._getPT(this.config?.pt, undefined, (value) => ObjectUtils.getItemValue(value, { instance: this }));
+    _useGlobalPT(callback, key, params) {
+        return this._usePT(
+            this._getPT(this.config?.pt, undefined, (value) => ObjectUtils.getItemValue(value, { instance: this })),
+            callback,
+            key,
+            params
+        );
     }
 
-    _useGlobalPT(callback, key, params) {
-        return this._usePT(this.globalPT.bind(this), callback, key, params);
+    _loadGlobalStyles() {
+        const globalCSS = this._useGlobalPT(this._getOptionValue.bind(this), 'global.css', this._params());
+        ObjectUtils.isNotEmpty(globalCSS) && useStyle(globalCSS, { name: 'global', nonce: this.config?.csp?.nonce });
     }
 
     _getPTClassValue(...args: any[]) {
