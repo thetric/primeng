@@ -58,12 +58,16 @@ export function useStyle(css, options: any = {}) {
     //     }
     // };
 
-    // const unload = () => {
-    //     if (!document || !isLoaded) return;
-    //     stop();
-    //     DomHandler.isExist(styleRef) && document.head.removeChild(styleRef);
-    // };
+    const unload = () => {
+        if (!document || !isLoaded) return;
+        stop();
+        DomHandler.isExist(styleRef) && document.head.removeChild(styleRef);
+    };
 
+    // TODO: add this line
+    // if (immediate && !manual) load();
+
+    // TODO: return them
     // return {
     //     id,
     //     name,
