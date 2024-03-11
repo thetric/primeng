@@ -1,9 +1,10 @@
 import { DOCUMENT } from '@angular/common';
-import { Input, ElementRef, Directive, SimpleChanges, effect, inject, ChangeDetectorRef, Renderer2, PLATFORM_ID, NgZone, computed, signal, afterRender, afterNextRender } from '@angular/core';
+import { Input, ElementRef, Directive, SimpleChanges, effect, inject, ChangeDetectorRef, Renderer2, PLATFORM_ID, NgZone, computed, signal, afterRender, afterNextRender, ContentChildren, QueryList } from '@angular/core';
 import { ObjectUtils, UniqueComponentId } from 'primeng/utils';
 import { PrimeNGConfig } from '../api/primengconfig';
 import { platformBrowser } from '@angular/platform-browser';
 import { useStyle } from 'primeng/usestyle';
+import { PrimeTemplate } from '../api/shared';
 @Directive({ standalone: true })
 export class BaseComponent {
     public el: ElementRef = inject(ElementRef);
@@ -33,6 +34,8 @@ export class BaseComponent {
     @Input() unstyled: boolean = false;
 
     @Input() pt: { [arg: string]: any } | undefined | null;
+
+    @ContentChildren(PrimeTemplate) templates!: QueryList<PrimeTemplate>;
 
     params: any = {
         props: {},
